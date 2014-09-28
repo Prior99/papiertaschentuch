@@ -4,6 +4,7 @@ import de.cronosx.papiertaschentuch.models.Cube;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.LWJGLException;
@@ -20,11 +21,16 @@ public class Graphics extends Thread {
 
     private int screenWidth, screenHeight;
     private List<Entity> entities;
+    private Graphics.ReadyListener listener;
 
     public Graphics(int width, int height, List<Entity> entities) {
         this.screenWidth = width;
         this.screenHeight = height;
         this.entities = entities;
+    }
+    
+    public void onReady(Graphics.ReadyListener listener) {
+        this.listener = listener;
     }
 
     private void setup() {
@@ -79,8 +85,13 @@ public class Graphics extends Thread {
     @Override
     public void run() {
         setup();
+        listener.onReady();
         while (!Display.isCloseRequested()) {
             render();
         }
+    }
+    
+    public interface ReadyListener {
+        public void onReady();
     }
 }

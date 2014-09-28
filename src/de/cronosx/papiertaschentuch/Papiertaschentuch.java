@@ -21,26 +21,11 @@ public class Papiertaschentuch {
         List<Entity> entities = Collections.synchronizedList(new ArrayList<Entity>());
         Entity e = new Entity(new Cube(), Textures.getTexture("bricks.png"));
         entities.add(e);
-        Camera.move(new Vector3f(0, 0, -4));
-        
-        Thread t = new Thread(() -> { 
-            while(true) {
-                e.rotate(new Vector3f(0f, -(float)Math.PI/20f, 0f));
-                try {
-                    Thread.sleep(1000/60);
-                } 
-                catch(InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
+        final Graphics graphics = new Graphics(800, 600, entities);
+        final Game game = new Game(entities);
+        graphics.onReady(() -> {
+            game.start();
         });
-        t.start();
-        Graphics g = new Graphics(800, 600, entities);
-        g.start();
+        graphics.start();
     }
-
-    private static Vector3f Vector3f(float f, float f0, float f1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
