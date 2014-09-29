@@ -2,7 +2,7 @@ package de.cronosx.papiertaschentuch;
 
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector3f;
 
 public class Camera {
     private static Vector3f position = new Vector3f(0, 0, 0), 

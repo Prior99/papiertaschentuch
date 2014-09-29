@@ -1,8 +1,10 @@
 package de.cronosx.papiertaschentuch.models;
 
+import com.bulletphysics.collision.shapes.*;
 import de.cronosx.papiertaschentuch.Model;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import javax.vecmath.*;
 
 public class Cube extends Model {
 	private float[] vertices, textureMap, normals;
@@ -11,30 +13,30 @@ public class Cube extends Model {
 	@Override
 	protected void load() {
 		vertices = new float[] {
-			-1.f, -1.f,  1.f,//Front
-			 1.f, -1.f,  1.f,
-			 1.f,  1.f,  1.f,
-			-1.f,  1.f,  1.f,
-			-1.f, -1.f, -1.f,//Back
-			-1.f,  1.f, -1.f,
-			 1.f,  1.f, -1.f,
-			 1.f, -1.f, -1.f,
-			-1.f,  1.f, -1.f,//Top
-			-1.f,  1.f,  1.f,
-			 1.f,  1.f,  1.f,
-			 1.f,  1.f, -1.f,
-			-1.f, -1.f, -1.f,//Bottom
-			 1.f, -1.f, -1.f,
-			 1.f, -1.f,  1.f,
-			-1.f, -1.f,  1.f,
-			 1.f, -1.f, -1.f,//Right
-			 1.f,  1.f, -1.f,
-			 1.f,  1.f,  1.f,
-			 1.f, -1.f,  1.f,
-			-1.f, -1.f, -1.f,//Left
-			-1.f, -1.f,  1.f,
-			-1.f,  1.f,  1.f,
-			-1.f,  1.f, -1.f
+			-.5f, -.5f,  .5f,//Front
+			 .5f, -.5f,  .5f,
+			 .5f,  .5f,  .5f,
+			-.5f,  .5f,  .5f,
+			-.5f, -.5f, -.5f,//Back
+			-.5f,  .5f, -.5f,
+			 .5f,  .5f, -.5f,
+			 .5f, -.5f, -.5f,
+			-.5f,  .5f, -.5f,//Top
+			-.5f,  .5f,  .5f,
+			 .5f,  .5f,  .5f,
+			 .5f,  .5f, -.5f,
+			-.5f, -.5f, -.5f,//Bottom
+			 .5f, -.5f, -.5f,
+			 .5f, -.5f,  .5f,
+			-.5f, -.5f,  .5f,
+			 .5f, -.5f, -.5f,//Right
+			 .5f,  .5f, -.5f,
+			 .5f,  .5f,  .5f,
+			 .5f, -.5f,  .5f,
+			-.5f, -.5f, -.5f,//Left
+			-.5f, -.5f,  .5f,
+			-.5f,  .5f,  .5f,
+			-.5f,  .5f, -.5f
 		};
 		normals = new float[] {
 			0.f,  0.f,  1.f, //Front
@@ -122,5 +124,10 @@ public class Cube extends Model {
 	@Override
 	protected int[] getFaces() {
 		return faces;
+	}
+	
+	@Override
+	public CollisionShape getCollisionShape() {
+		return new BoxShape(new Vector3f(.5f, .5f, .5f));
 	}
 }

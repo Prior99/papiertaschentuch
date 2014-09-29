@@ -1,24 +1,23 @@
 package de.cronosx.papiertaschentuch;
 
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.lwjgl.opengl.Display;
+import java.util.*;
 
 public class Game extends Thread {
-    private List<Entity> entities;
-    private Physics physics;
+    private Entities entities;
+	private List<TickListener> tickListeners;
     
-    public Game(List<Entity> entities) {
-        this.entities = entities;
-        physics = new Physics(entities);
-        
+    public Game(Entities entities) {
+        tickListeners = new ArrayList<>();
+		this.entities = entities;
     }
+	
     @Override
     public void run() {
         while(!Input.isClosed()) {
             Input.tick();
-            physics.tick();
+			tickListeners.stream().forEach((l) -> {
+				l.onTick();
+			});
             try {
                 Thread.sleep(1000/60);
             } 
@@ -27,4 +26,12 @@ public class Game extends Thread {
             }
         }
     }
+	
+	public void onTick(TickListener l) {
+		tickListeners.add(l);
+	}
+	
+	public interface TickListener {
+		public void onTick();
+	}
 }

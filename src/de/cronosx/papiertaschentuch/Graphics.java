@@ -1,36 +1,40 @@
 package de.cronosx.papiertaschentuch;
 
-import de.cronosx.papiertaschentuch.models.Cube;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.opengl.GL13;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.util.glu.GLU.*;
 
 public class Graphics extends Thread {
 
     private int screenWidth, screenHeight;
-    private List<Entity> entities;
-    private Graphics.ReadyListener listener;
+    private Entities entities;
+    private List<ReadyListener> readyListeners;
+    private List<GraphicsTickListener> graphicsTickListeners;
+    private List<ShutdownListener> shutdownListeners;
 
-    public Graphics(int width, int height, List<Entity> entities) {
+    public Graphics(int width, int height, Entities entities) {
         this.screenWidth = width;
         this.screenHeight = height;
         this.entities = entities;
+		readyListeners = new ArrayList<>();
+		graphicsTickListeners = new ArrayList<>();
+		shutdownListeners = new ArrayList<>();
     }
     
-    public void onReady(Graphics.ReadyListener listener) {
-        this.listener = listener;
+    public void onReady(ReadyListener listener) {
+        this.readyListeners.add(listener);
+    }
+    
+    public void onGraphicsTick(GraphicsTickListener listener) {
+        this.graphicsTickListeners.add(listener);
+    }
+    
+    public void onShutdown(ShutdownListener listener) {
+        this.shutdownListeners.add(listener);
     }
 
     private void setup() {
@@ -76,23 +80,39 @@ public class Graphics extends Thread {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         Camera.transform();
-        for(Entity e : entities) {
-            e.draw();
-        }
+		graphicsTickListeners.stream().forEach((l) -> {
+			l.onGraphicsTick();
+		});
+		entities.forEach((e) -> {
+			e.draw();
+		});
         Display.update();
     }
 
     @Override
     public void run() {
         setup();
-        listener.onReady();
+		readyListeners.stream().forEach((l) -> {
+			l.onReady();
+		});
         while(!Input.isClosed()) {
             render();
         }
+		shutdownListeners.stream().forEach((l) -> {
+			l.onShutdown();
+		});
         Display.destroy();
     }
     
     public interface ReadyListener {
         public void onReady();
+    }
+	
+    public interface ShutdownListener {
+        public void onShutdown();
+    }
+	
+    public interface GraphicsTickListener {
+        public void onGraphicsTick();
     }
 }

@@ -1,5 +1,6 @@
 package de.cronosx.papiertaschentuch;
 
+import com.bulletphysics.collision.shapes.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -81,4 +82,6 @@ public abstract class Model {
     protected abstract float[] getTextureMap();
 
     protected abstract int[] getFaces();
+	
+	public abstract CollisionShape getCollisionShape();
 }

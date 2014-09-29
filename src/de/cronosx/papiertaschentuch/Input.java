@@ -3,7 +3,7 @@ package de.cronosx.papiertaschentuch;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector3f;
 
 public class Input {
     private static final float speed = .1f,
@@ -42,11 +42,11 @@ public class Input {
             if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
                 closed = true;
             }
-            if(moved) {
+            /*if(moved) {
                 Camera.setPosition(new Vector3f(Camera.getPosition().x, 
                     (float)(Math.sin(joggingAngle += joggingFactor) * joggingScale),
                     Camera.getPosition().z));
-            }
+            }*/
             int dx = Mouse.getDX(),
                 dy = Mouse.getDY();
             Camera.rotate(new Vector3f(-dy * turnSpeedFactor, dx * turnSpeedFactor, 0f));
@@ -56,6 +56,7 @@ public class Input {
     public static boolean isClosed() {
         return closed;
     }
+	
     private static float degToRad(float degree) {
         return (float)((2 * Math.PI) / 360 * degree);
     }
