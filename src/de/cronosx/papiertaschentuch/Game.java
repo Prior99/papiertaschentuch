@@ -7,15 +7,18 @@ import org.lwjgl.opengl.Display;
 
 public class Game extends Thread {
     private List<Entity> entities;
+    private Physics physics;
     
     public Game(List<Entity> entities) {
         this.entities = entities;
+        physics = new Physics(entities);
         
     }
     @Override
     public void run() {
         while(!Input.isClosed()) {
             Input.tick();
+            physics.tick();
             try {
                 Thread.sleep(1000/60);
             } 
