@@ -14,7 +14,7 @@ public class Game extends Thread {
     }
     @Override
     public void run() {
-        while(!Display.isCloseRequested()) {
+        while(!Input.isClosed()) {
             Input.tick();
             try {
                 Thread.sleep(1000/60);

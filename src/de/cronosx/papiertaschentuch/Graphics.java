@@ -45,7 +45,7 @@ public class Graphics extends Thread {
 
     private void setupMouse() {
         Mouse.setClipMouseCoordinatesToWindow(true);
-        //Mouse.setGrabbed(true);
+        Mouse.setGrabbed(true);
     }
 
     private void setupDisplay() throws LWJGLException {
@@ -86,9 +86,10 @@ public class Graphics extends Thread {
     public void run() {
         setup();
         listener.onReady();
-        while (!Display.isCloseRequested()) {
+        while(!Input.isClosed()) {
             render();
         }
+        Display.destroy();
     }
     
     public interface ReadyListener {
