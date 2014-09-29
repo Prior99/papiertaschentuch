@@ -79,10 +79,9 @@ public class Entity {
         if(model != null && texture != null) {
             glPushMatrix();
             glTranslatef(position.x, position.y, position.z);
-            //glTranslatef((1 - scale.x) / 2, (1 - scale.y) / 2, (1 - scale.z) / 2);
-            glRotatef(rotation.x, 1.f, 0.f, 0.f);
-            glRotatef(rotation.y, 0.f, 1.f, 0.f);
-            glRotatef(rotation.z, 0.f, 0.f, 1.f);
+			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
+			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
+			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
             model.draw();

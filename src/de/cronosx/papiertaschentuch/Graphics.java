@@ -115,4 +115,12 @@ public class Graphics extends Thread {
     public interface GraphicsTickListener {
         public void onGraphicsTick();
     }
+	
+    public static float degreeToRadiant(float degree) {
+        return (float)((2 * Math.PI) / 360 * degree);
+    }
+	
+    public static float radiantToDegree(float degree) {
+        return (float)(360 / (2 * Math.PI) * degree);
+    }
 }

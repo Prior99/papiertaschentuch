@@ -29,9 +29,9 @@ public class Camera {
     }
     
     public static void transform() {
-        glRotatef(rotation.x, 1.f, 0.f, 0.f);
-        glRotatef(rotation.y, 0.f, 1.f, 0.f);
-        glRotatef(rotation.z, 0.f, 0.f, 1.f);
+        glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
+        glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
+        glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
         glTranslatef(position.x, position.y, position.z);
     }
     

@@ -7,7 +7,7 @@ import javax.vecmath.Vector3f;
 
 public class Input {
     private static final float speed = .1f,
-        turnSpeedFactor = .1f;
+        turnSpeedFactor = .003f;
     private static float joggingFactor = .25f,
         joggingScale = .05f,
         joggingAngle = 0;
@@ -18,26 +18,26 @@ public class Input {
             if(Keyboard.isKeyDown(Keyboard.KEY_W)) { //Move forward
                 moved = true;
                 Camera.move(new Vector3f(
-                    (float) Math.sin(-degToRad(Camera.getRotation().y)) * speed, 0f,
-                    (float) Math.cos(-degToRad(Camera.getRotation().y)) * speed)); 
+                    (float) Math.sin(-Camera.getRotation().y) * speed, 0f,
+                    (float) Math.cos(-Camera.getRotation().y) * speed)); 
             }
             if(Keyboard.isKeyDown(Keyboard.KEY_S)) { //Move back
                 moved = true;
                 Camera.move(new Vector3f(
-                    -(float) Math.sin(-degToRad(Camera.getRotation().y)) * speed, 0f,
-                    -(float) Math.cos(-degToRad(Camera.getRotation().y)) * speed)); 
+                    -(float) Math.sin(-Camera.getRotation().y) * speed, 0f,
+                    -(float) Math.cos(-Camera.getRotation().y) * speed)); 
             }
             if(Keyboard.isKeyDown(Keyboard.KEY_A)) { //Move left
                 moved = true;
                 Camera.move(new Vector3f(
-                    (float) Math.sin(-degToRad(Camera.getRotation().y - 90)) * speed, 0f,
-                    (float) Math.cos(-degToRad(Camera.getRotation().y - 90)) * speed)); 
+                    (float) Math.sin(-Camera.getRotation().y + Math.PI/2) * speed, 0f,
+                    (float) Math.cos(-Camera.getRotation().y + Math.PI/2) * speed)); 
             }
             if(Keyboard.isKeyDown(Keyboard.KEY_D)) { //Move right
                 moved = true;
                 Camera.move(new Vector3f(
-                    (float) Math.sin(-degToRad(Camera.getRotation().y + 90)) * speed, 0f,
-                    (float) Math.cos(-degToRad(Camera.getRotation().y + 90)) * speed)); 
+                    (float) Math.sin(-Camera.getRotation().y - Math.PI/2) * speed, 0f,
+                    (float) Math.cos(-Camera.getRotation().y - Math.PI/2) * speed)); 
             }
             if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
                 closed = true;
@@ -55,9 +55,5 @@ public class Input {
         
     public static boolean isClosed() {
         return closed;
-    }
-	
-    private static float degToRad(float degree) {
-        return (float)((2 * Math.PI) / 360 * degree);
     }
 }
