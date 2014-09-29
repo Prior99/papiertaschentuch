@@ -11,22 +11,22 @@ public class Ground extends Model {
 	@Override
 	protected void load() {
 		vertices = new float[] {
-			-100f, 0.f, -100f,//Bottom
-			 100f, 0.f, -100f,
-			 100f, 0.f,  100f,
-			-100f, 0.f,  100f
+			-10f, 0.f, -10f,//Bottom
+			 10f, 0.f, -10f,
+			 10f, 0.f,  10f,
+			-10f, 0.f,  10f
 		};
 		normals = new float[] {
-			0.f, -1.f,  0.f, //Top
-			0.f, -1.f,  0.f,
-			0.f, -1.f,  0.f,
-			0.f, -1.f,  0.f
+			0.f, 1.f,  0.f, //Top
+			0.f, 1.f,  0.f,
+			0.f, 1.f,  0.f,
+			0.f, 1.f,  0.f
 		};
 		textureMap = new float[] {
-			100f, 100f,//Bottom
-			 0.f, 100f,
+			10f, 10f,//Bottom
+			 0.f, 10f,
 			 0.f, 0.f,
-			100f, 0.f
+			10f, 0.f
 		};
 		faces = new int[] {
 			0,  1,  2,//Front
@@ -56,6 +56,6 @@ public class Ground extends Model {
 	
 	@Override
 	public CollisionShape getCollisionShape() {
-		return new com.bulletphysics.collision.shapes.BoxShape(new Vector3f(100f, 0f, 100f));
+		return new com.bulletphysics.collision.shapes.BoxShape(new Vector3f(10f, .1f, 10f));
 	}
 }

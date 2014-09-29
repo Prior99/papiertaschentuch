@@ -67,7 +67,7 @@ public class Graphics extends Thread {
         glClearColor(0.5f, 0.5f, 1.0f, 0.5f); // Lightblue Background
         glClearDepth(1.0f); // Depth Buffer Setup
         glEnable(GL_DEPTH_TEST); // Enables Depth Testing
-        //glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHTING);
         glDepthFunc(GL_LEQUAL); // The Type Of Depth Testing To Do
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); // Really Nice Perspective Calculations
         glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
@@ -82,6 +82,9 @@ public class Graphics extends Thread {
         Camera.transform();
 		graphicsTickListeners.stream().forEach((l) -> {
 			l.onGraphicsTick();
+		});
+		Lights.forEach((l) -> {
+			l.applyGL();
 		});
 		entities.forEach((e) -> {
 			e.draw();

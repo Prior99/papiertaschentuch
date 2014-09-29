@@ -47,14 +47,14 @@ public class Cube extends Model {
 			0.f,  0.f, -1.f,
 			0.f,  0.f, -1.f,
 			0.f,  0.f, -1.f,
-			0.f, -1.f,  0.f, //Top
+			0.f, 1.f,  0.f, //Top
+			0.f, 1.f,  0.f,
+			0.f, 1.f,  0.f,
+			0.f, 1.f,  0.f,
+			0.f, -1.f,  0.f, //Bottom
 			0.f, -1.f,  0.f,
 			0.f, -1.f,  0.f,
 			0.f, -1.f,  0.f,
-			0.f,  1.f,  0.f, //Bottom
-			0.f,  1.f,  0.f,
-			0.f,  1.f,  0.f,
-			0.f,  1.f,  0.f,
 			1.f,  0.f,  0.f, //Right
 			1.f,  0.f,  0.f,
 			1.f,  0.f,  0.f,

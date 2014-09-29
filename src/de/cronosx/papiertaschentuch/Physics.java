@@ -43,8 +43,6 @@ public class Physics {
 			rigidBody.getMotionState().getWorldTransform(nextTransform);
 			Quat4f quat = new Quat4f();
 			nextTransform.getRotation(quat);
-					System.out.printf("rot = %.2f, %.2f, %.2f, %.2f\n", 
-						quat.w, quat.x, quat.y, quat.z);
 			entity.updatePhysicsTransform(nextTransform.origin, new Vector3f(
 					(float)Math.atan2(2*(quat.w*quat.x + quat.y*quat.z), 1 - 2*(quat.x*quat.x + quat.y*quat.y)),
 					(float)Math.asin(2*(quat.w*quat.y - quat.z*quat.x)),
