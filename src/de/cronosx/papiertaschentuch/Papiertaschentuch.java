@@ -24,7 +24,7 @@ public class Papiertaschentuch {
 	game.onTick(() -> {
 	    physics.tick();
 	    if (Math.random() < .05) {
-		Entity e = new Entity(Models.getCube(), Textures.getTexture("bricks.png"), 10);
+		Entity e = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 10);
 		e.setPosition(new Vector3f(0, 10f, 0));
 		addEntity(e);
 	    }
@@ -42,8 +42,8 @@ public class Papiertaschentuch {
 
     public static void main(String[] args) {
 	Papiertaschentuch p = new Papiertaschentuch();
-	Entity plane = new Entity(Models.getGround(), Textures.getTexture("tile.png"), 0);
-	p.addEntity(plane);
+	//Entity plane = new Entity(Models.getGround(), Textures.getTexture("tile.png"), 0);
+	//p.addEntity(plane);
 	Camera.setPosition(new Vector3f(0, -2f, 0));
 	p.start();
 	Light l = Lights.createLight();
