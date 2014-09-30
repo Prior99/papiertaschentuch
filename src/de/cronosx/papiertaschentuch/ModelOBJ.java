@@ -1,13 +1,16 @@
 package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.collision.shapes.*;
+import com.bulletphysics.util.*;
 import java.io.*;
+import javax.vecmath.*;
 
 public class ModelOBJ extends Model {
 
 	private File file;
 	private float[] vertices, textureMap, normals;
 	private int[] faces;
+	private ConvexHullShape shape;
 
 	public ModelOBJ(File file) {
 		this.file = file;
@@ -31,9 +34,12 @@ public class ModelOBJ extends Model {
 				normals[i] = parser.getNormals().get(i);
 			}
 			faces = new int[parser.getFaces().size()];
-			for(int i = 0; i < parser.getNormals().size(); i++) {
+			for(int i = 0; i < parser.getFaces().size(); i++) {
 				faces[i] = parser.getFaces().get(i);
 			}
+			ObjectArrayList<Vector3f> objArrayList = new ObjectArrayList<>();
+			objArrayList.addAll(parser.getVertexList());
+			shape = new ConvexHullShape(objArrayList);
 		}
 	}
 
@@ -59,7 +65,7 @@ public class ModelOBJ extends Model {
 
 	@Override
 	public CollisionShape getCollisionShape() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return shape;
 	}
 
 }

@@ -25,6 +25,12 @@ public class Papiertaschentuch {
 				addEntity(e);
 			}
 		});
+		game.onShutdown(() -> {
+			graphics.shutdown();
+		});
+		graphics.onShutdown(() -> {
+			game.shutdown();
+		});
 	}
 
 	public void addEntity(Entity e) {

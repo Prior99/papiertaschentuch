@@ -15,8 +15,11 @@ public class Graphics extends Thread {
 	private List<ReadyListener> readyListeners;
 	private List<GraphicsTickListener> graphicsTickListeners;
 	private List<ShutdownListener> shutdownListeners;
+	private boolean exit;
 
 	public Graphics(int width, int height, Entities entities) {
+		super("Graphicsthread");
+		exit = false;
 		this.screenWidth = width;
 		this.screenHeight = height;
 		this.entities = entities;
@@ -99,13 +102,25 @@ public class Graphics extends Thread {
 		readyListeners.stream().forEach((l) -> {
 			l.onReady();
 		});
-		while(!Input.isClosed()) {
-			render();
+		while(!Input.isClosed() && !exit) {
+			try {
+				render();
+			}
+			catch(Exception e) {
+				System.out.println("Error in renderloop, shutting down: " + e.getMessage());
+				e.printStackTrace();
+				shutdown();
+				break;
+			}
 		}
+		Display.destroy();
 		shutdownListeners.stream().forEach((l) -> {
 			l.onShutdown();
 		});
-		Display.destroy();
+	}
+	
+	public void shutdown() {
+		exit = true;
 	}
 
 	public interface ReadyListener {

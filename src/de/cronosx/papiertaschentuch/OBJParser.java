@@ -120,7 +120,7 @@ public class OBJParser {
 
 	private void parseFace(String[] parts) {
 		Face f;
-		if(parts.length == 3) {
+		if(parts.length == 4) {
 			String[][] partStruct = new String[][]{
 				parts[1].split("/"),
 				parts[2].split("/"),
@@ -208,10 +208,10 @@ public class OBJParser {
 							}
 						}
 						catch(UnsupportedOperationException e) {
-							System.out.println("Unsupported operation in line " + line + " of OBJ-File: " + e.getMessage());
+							System.out.println("Unsupported operation in line " + num + " of OBJ-File: " + e.getMessage());
 						}
 						catch(IllegalArgumentException e) {
-							System.out.println("Illegal argument in line " + line + " of OBJ-File: " + e.getMessage());
+							System.out.println("Illegal argument in line " + num + " of OBJ-File: " + e.getMessage());
 						}
 					}
 				}
@@ -290,6 +290,10 @@ public class OBJParser {
 
 	public List<Integer> getFaces() {
 		return finalFaces;
+	}
+	
+	public List<Vector3f> getVertexList() {
+		return vertices;
 	}
 
 	private void build() {

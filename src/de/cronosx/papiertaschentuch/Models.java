@@ -1,11 +1,15 @@
 package de.cronosx.papiertaschentuch;
 
 import java.io.File;
-import java.util.Map;
+import java.util.*;
 
 public class Models {
 
-	private static Map<String, Model> models;
+	private static Map<String, Model> models = new HashMap<>();
+	
+	public static void prefetch() {
+		
+	}
 
 	public static Model getModel(String fileName) {
 		if(models.containsKey(fileName)) {
@@ -13,6 +17,7 @@ public class Models {
 		}
 		else {
 			Model model = new ModelOBJ(new File("models/" + fileName));
+			model.init();
 			models.put(fileName, model);
 			return model;
 		}

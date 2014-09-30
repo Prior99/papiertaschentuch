@@ -43,7 +43,6 @@ public abstract class Model {
 	}
 
 	private void bind() {
-		init();
 		vertexBufferID = glGenBuffers();
 		normalBufferID = glGenBuffers();
 		textureBufferID = glGenBuffers();
