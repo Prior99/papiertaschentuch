@@ -4,35 +4,36 @@ import java.util.*;
 
 public class Game extends Thread {
 
-    private Entities entities;
-    private List<TickListener> tickListeners;
+	private Entities entities;
+	private List<TickListener> tickListeners;
 
-    public Game(Entities entities) {
-	tickListeners = new ArrayList<>();
-	this.entities = entities;
-    }
-
-    @Override
-    public void run() {
-	while (!Input.isClosed()) {
-	    Input.tick();
-	    tickListeners.stream().forEach((l) -> {
-		l.onTick();
-	    });
-	    try {
-		Thread.sleep(1000 / 60);
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
+	public Game(Entities entities) {
+		tickListeners = new ArrayList<>();
+		this.entities = entities;
 	}
-    }
 
-    public void onTick(TickListener l) {
-	tickListeners.add(l);
-    }
+	@Override
+	public void run() {
+		while(!Input.isClosed()) {
+			Input.tick();
+			tickListeners.stream().forEach((l) -> {
+				l.onTick();
+			});
+			try {
+				Thread.sleep(1000 / 60);
+			}
+			catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    public interface TickListener {
+	public void onTick(TickListener l) {
+		tickListeners.add(l);
+	}
 
-	public void onTick();
-    }
+	public interface TickListener {
+
+		public void onTick();
+	}
 }
