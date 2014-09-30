@@ -7,51 +7,45 @@ import javax.vecmath.Vector3f;
 
 public class Input {
 
-	private static final float speed = .1f,
-			turnSpeedFactor = .003f;
-	private static float joggingFactor = .25f,
-			joggingScale = .05f,
-			joggingAngle = 0;
+	private static float turnSpeedFactor = .003f;
 	private static boolean closed = false;
+	
+	private static Player player;
+	
+	public static void setPlayerObject(Player player) {
+		Input.player = player;
+	}
 
 	public static void tick() {
-		if(Display.isActive()) {
-			boolean moved = false;
+		if(Display.isActive() && player != null) {
+			Vector3f walkDirection = new Vector3f(0, 0, 0);
 			if(Keyboard.isKeyDown(Keyboard.KEY_W)) { //Move forward
-				moved = true;
-				Camera.move(new Vector3f(
-						(float) Math.sin(-Camera.getRotation().y) * speed, 0f,
-						(float) Math.cos(-Camera.getRotation().y) * speed));
+				walkDirection.add(new Vector3f(
+						(float) Math.sin(-player.getRotation().y), 0f,
+						(float) Math.cos(-player.getRotation().y)));
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_S)) { //Move back
-				moved = true;
-				Camera.move(new Vector3f(
-						-(float) Math.sin(-Camera.getRotation().y) * speed, 0f,
-						-(float) Math.cos(-Camera.getRotation().y) * speed));
+				walkDirection.add(new Vector3f(
+						-(float) Math.sin(-player.getRotation().y), 0f,
+						-(float) Math.cos(-player.getRotation().y)));
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_A)) { //Move left
-				moved = true;
-				Camera.move(new Vector3f(
-						(float) Math.sin(-Camera.getRotation().y + Math.PI / 2) * speed, 0f,
-						(float) Math.cos(-Camera.getRotation().y + Math.PI / 2) * speed));
+				walkDirection.add(new Vector3f(
+						(float) Math.sin(-player.getRotation().y + Math.PI / 2), 0f,
+						(float) Math.cos(-player.getRotation().y + Math.PI / 2)));
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_D)) { //Move right
-				moved = true;
-				Camera.move(new Vector3f(
-						(float) Math.sin(-Camera.getRotation().y - Math.PI / 2) * speed, 0f,
-						(float) Math.cos(-Camera.getRotation().y - Math.PI / 2) * speed));
+				walkDirection.add(new Vector3f(
+						(float) Math.sin(-player.getRotation().y - Math.PI / 2), 0f,
+						(float) Math.cos(-player.getRotation().y - Math.PI / 2)));
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-				closed = true;
-			}
-			/*if(moved) {
-			 Camera.setPosition(new Vector3f(Camera.getPosition().x, 
-			 (float)(Math.sin(joggingAngle += joggingFactor) * joggingScale),
-			 Camera.getPosition().z));
-			 }*/
+			player.setWalkDirection(walkDirection);
 			int dx = Mouse.getDX(),
-					dy = Mouse.getDY();
-			Camera.rotate(new Vector3f(-dy * turnSpeedFactor, dx * turnSpeedFactor, 0f));
+				dy = Mouse.getDY();
+			player.rotate(new Vector3f(-dy * turnSpeedFactor, dx * turnSpeedFactor, 0f));
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+			closed = true;
 		}
 	}
 

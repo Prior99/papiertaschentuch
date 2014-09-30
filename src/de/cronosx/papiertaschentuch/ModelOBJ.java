@@ -3,14 +3,16 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.util.*;
 import java.io.*;
+import java.nio.*;
 import javax.vecmath.*;
+import org.lwjgl.*;
 
 public class ModelOBJ extends Model {
 
 	private File file;
 	private float[] vertices, textureMap, normals;
 	private int[] faces;
-	private ConvexHullShape shape;
+	private CollisionShape concaveShape, convexShape;
 
 	public ModelOBJ(File file) {
 		this.file = file;
@@ -37,9 +39,6 @@ public class ModelOBJ extends Model {
 			for(int i = 0; i < parser.getFaces().size(); i++) {
 				faces[i] = parser.getFaces().get(i);
 			}
-			ObjectArrayList<Vector3f> objArrayList = new ObjectArrayList<>();
-			objArrayList.addAll(parser.getVertexList());
-			shape = new ConvexHullShape(objArrayList);
 		}
 	}
 
@@ -62,10 +61,46 @@ public class ModelOBJ extends Model {
 	protected int[] getFaces() {
 		return faces;
 	}
+	
+	private void createConvexShape() {
+		ObjectArrayList<Vector3f> objArrayList = new ObjectArrayList<>();
+		for(int i = 0; i < vertices.length; i += 3) {
+			objArrayList.add(new Vector3f(vertices[i], vertices[i + 1], vertices[i + 2]));
+		}
+		convexShape = new ConvexHullShape(objArrayList);
+	}
+	
+	private void createConcaveShape() {
+		ByteBuffer bbVertices = BufferUtils.createByteBuffer(Float.BYTES * vertices.length);
+		ByteBuffer bbIndexes = BufferUtils.createByteBuffer(Integer.BYTES * faces.length);
+		for(int i = 0; i < faces.length; i++) {
+			bbIndexes.putInt(faces[i]);
+		}
+		for(int i = 0; i < vertices.length; i++) {
+			bbVertices.putFloat(vertices[i]);
+		}
+		bbVertices.rewind();
+		bbIndexes.rewind();
+		int numTriangles = faces.length / 3;
+		int numVertices = vertices.length;
+		TriangleIndexVertexArray triangleArray = new TriangleIndexVertexArray(numTriangles, bbIndexes, 3 * Integer.BYTES, numVertices, bbVertices, 3 * Float.BYTES);
+		concaveShape = new BvhTriangleMeshShape(triangleArray, true);
+	}
 
 	@Override
-	public CollisionShape getCollisionShape() {
-		return shape;
+	public CollisionShape getConvexCollisionShape() {
+		if(convexShape == null) {
+			createConvexShape();
+		}
+		return convexShape;
+	}
+
+	@Override
+	public CollisionShape getConcaveCollisionShape() {
+		if(concaveShape == null) {
+			createConcaveShape();
+		}
+		return concaveShape;
 	}
 
 }

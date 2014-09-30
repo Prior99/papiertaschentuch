@@ -102,7 +102,7 @@ public class OBJParser {
 	}
 
 	private void parseVertexTextureMap(String[] parts) {
-		if(parts.length == 3) {
+		if(parts.length == 3 || parts.length == 4) {
 			try {
 				Vector2f v = new Vector2f(
 						Float.parseFloat(parts[1]),
@@ -251,17 +251,17 @@ public class OBJParser {
 				}
 			}
 			for(int i : f.getNormals()) {
-				if(i >= vertexNormals.size()) {
+				if(i < 0 || i > vertexNormals.size()) {
 					throw new IllegalArgumentException("Face is referring to normal that is out of bounds.");
 				}
 			}
 			for(int i : f.getVertices()) {
-				if(i >= vertices.size()) {
+				if(i < 0 || i > vertices.size()) {
 					throw new IllegalArgumentException("Face is referring to vertex that is out of bounds.");
 				}
 			}
 			for(int i : f.getTextureMappings()) {
-				if(i >= vertexTextureMappings.size()) {
+				if(i < 0 || i > vertexTextureMappings.size()) {
 					throw new IllegalArgumentException("Face is referring to texturemapping that is out of bounds.");
 				}
 			}
@@ -301,7 +301,7 @@ public class OBJParser {
 		for(Face f : faces) {
 			if(hasNormals()) {
 				for(int vn : f.getNormals()) {
-					Vector3f vnv = vertexNormals.get(vn);
+					Vector3f vnv = vertexNormals.get(vn -1);
 					finalNormals.add(vnv.x);
 					finalNormals.add(vnv.y);
 					finalNormals.add(vnv.z);
@@ -309,13 +309,13 @@ public class OBJParser {
 			}
 			if(hasTextureMapping()) {
 				for(int vt : f.getTextureMappings()) {
-					Vector2f vtv = vertexTextureMappings.get(vt);
+					Vector2f vtv = vertexTextureMappings.get(vt -1);
 					finalTextureMappings.add(vtv.x);
 					finalTextureMappings.add(vtv.y);
 				}
 			}
 			for(int v : f.getVertices()) {
-				Vector3f vv = vertices.get(v);
+				Vector3f vv = vertices.get(v -1);
 				finalVertices.add(vv.x);
 				finalVertices.add(vv.y);
 				finalVertices.add(vv.z);

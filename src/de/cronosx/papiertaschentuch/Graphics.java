@@ -16,9 +16,11 @@ public class Graphics extends Thread {
 	private List<GraphicsTickListener> graphicsTickListeners;
 	private List<ShutdownListener> shutdownListeners;
 	private boolean exit;
+	private Player player;
 
-	public Graphics(int width, int height, Entities entities) {
+	public Graphics(int width, int height, Entities entities, Player player) {
 		super("Graphicsthread");
+		this.player = player;
 		exit = false;
 		this.screenWidth = width;
 		this.screenHeight = height;
@@ -26,6 +28,10 @@ public class Graphics extends Thread {
 		readyListeners = new ArrayList<>();
 		graphicsTickListeners = new ArrayList<>();
 		shutdownListeners = new ArrayList<>();
+	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 	public void onReady(ReadyListener listener) {
@@ -83,7 +89,7 @@ public class Graphics extends Thread {
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
-		Camera.transform();
+		player.transform();
 		graphicsTickListeners.stream().forEach((l) -> {
 			l.onGraphicsTick();
 		});

@@ -84,5 +84,6 @@ public abstract class Model {
 
 	protected abstract int[] getFaces();
 
-	public abstract CollisionShape getCollisionShape();
+	public abstract CollisionShape getConvexCollisionShape();
+	public abstract CollisionShape getConcaveCollisionShape();
 }
