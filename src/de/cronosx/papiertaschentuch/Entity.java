@@ -53,7 +53,7 @@ public class Entity {
 		Vector3f inertia = new Vector3f(0, 0, 0);
 		Transform transform = new Transform();
 		transform.setIdentity();
-		transform.origin.set(new Vector3f(0, 0, 0));
+		transform.origin.set(getPosition());
 		getCollisionShape().calculateLocalInertia(mass, inertia);
 		DefaultMotionState motionState = new DefaultMotionState(transform);
 		RigidBodyConstructionInfo rigidBodyInfo = new RigidBodyConstructionInfo(
