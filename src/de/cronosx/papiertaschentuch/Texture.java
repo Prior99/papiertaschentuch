@@ -29,7 +29,7 @@ public class Texture {
 		int[] pixels = new int[width * height];
 		bImg.getRGB(0, 0, width, height, pixels, 0, width);
 		buffer = BufferUtils.createByteBuffer(width * height * 4);
-		for(int y = 0; y < height; y++) {
+		for(int y = height - 1; y >= 0; y--) {
 			for(int x = 0; x < width; x++) {
 				int pixel = pixels[y * width + x];
 				buffer.put((byte) ((pixel >> 16) & 0xFF)); //R
