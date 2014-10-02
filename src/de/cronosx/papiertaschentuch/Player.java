@@ -15,9 +15,9 @@ public class Player {
 	private final ConvexShape shape;
 	private Vector3f rotation;
 	private static final float 
-		height = 2.f, 
+		height = 1.f, 
 		width = .75f,
-		stepHeight = 0.2f, 
+		stepHeight = height/2.f, 
 		speed = 0.2f;
 	
 	public Player() {
@@ -27,7 +27,7 @@ public class Player {
 		transform.setIdentity();
 		transform.origin.set(0.f, 0.f, 0.f);
 		ghostObject.setWorldTransform(transform);
-		shape = new CapsuleShape(.75f, 2.f);
+		shape = new BoxShape(new Vector3f(width, height, width));
 		ghostObject.setCollisionShape(shape);
 		ghostObject.setCollisionFlags(CollisionFlags.CHARACTER_OBJECT);
 		character = new KinematicCharacterController(ghostObject, shape, stepHeight);
@@ -71,6 +71,6 @@ public class Player {
 		glRotatef(Graphics.radiantToDegree(getRotation().x), 1.f, 0.f, 0.f);
 		glRotatef(Graphics.radiantToDegree(getRotation().y), 0.f, 1.f, 0.f);
 		glRotatef(Graphics.radiantToDegree(getRotation().z), 0.f, 0.f, 1.f);
-		glTranslatef(getPosition().x, -getPosition().y - 2.f, getPosition().z);
+		glTranslatef(getPosition().x, -getPosition().y - height*2, getPosition().z);
 	}
 }

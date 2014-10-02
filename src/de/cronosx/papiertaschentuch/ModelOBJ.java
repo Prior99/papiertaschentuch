@@ -76,8 +76,10 @@ public class ModelOBJ extends Model {
 		for(int i = 0; i < faces.length; i++) {
 			bbIndexes.putInt(faces[i]);
 		}
-		for(int i = 0; i < vertices.length; i++) {
-			bbVertices.putFloat(vertices[i]);
+		for(int i = 0; i < vertices.length; i+=3) {
+			bbVertices.putFloat(-vertices[i]);
+			bbVertices.putFloat(vertices[i + 1]);
+			bbVertices.putFloat(vertices[i + 2]);
 		}
 		bbVertices.rewind();
 		bbIndexes.rewind();

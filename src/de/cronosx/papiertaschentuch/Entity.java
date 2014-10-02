@@ -3,10 +3,10 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.linearmath.*;
+import javax.vecmath.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import javax.vecmath.Vector3f;
 
 public class Entity {
 
@@ -105,10 +105,16 @@ public class Entity {
 
 	public void setRotation(Vector3f rotation) {
 		this.rotation = rotation;
+		Transform tmp = new Transform();
+		rigidBody.getCenterOfMassTransform(tmp);
+		Quat4f quat = new Quat4f();
+		QuaternionUtil.setEuler(quat, rotation.x, rotation.y, rotation.z);
+		tmp.setRotation(quat);
+		rigidBody.setCenterOfMassTransform(tmp);
 	}
 
 	public void rotate(Vector3f delta) {
-		rotation = new Vector3f(rotation.x + delta.x, rotation.y + delta.y, rotation.z + delta.z);
+		setRotation(new Vector3f(rotation.x + delta.x, rotation.y + delta.y, rotation.z + delta.z));
 	}
 
 	public void draw() {

@@ -2,6 +2,7 @@ package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.collision.broadphase.*;
 import com.bulletphysics.collision.dispatch.*;
+import static com.bulletphysics.collision.dispatch.CollisionFlags.KINEMATIC_OBJECT;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
@@ -29,14 +30,15 @@ public class Physics {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, sweepBP, solver, collisionConfiguration);
 		dynamicsWorld.addAction(player.getKinematicCharacterController());
-		dynamicsWorld.addCollisionObject(player.getGhostObject(), CollisionFilterGroups.CHARACTER_FILTER, (short)(CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
+		dynamicsWorld.addCollisionObject(player.getGhostObject(), CollisionFilterGroups.CHARACTER_FILTER, (short)(CollisionFilterGroups.ALL_FILTER | CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
 		sweepBP.getOverlappingPairCache().setInternalGhostPairCallback(new GhostPairCallback());
 		dynamicsWorld.setGravity(new Vector3f(0f, -10f, 0f));
 		
 	}
 
 	public void addEntity(Entity e) {
-		dynamicsWorld.addRigidBody(e.getRigidBody());
+		RigidBody body = e.getRigidBody();
+		dynamicsWorld.addRigidBody(body);
 	}
 
 	public void tick() {

@@ -21,12 +21,12 @@ public class Papiertaschentuch {
 		graphics.onReady(() -> {
 			game.start();
 			for(int i = -6; i < 6; i+=2) {
-				Entity barrel = new Entity(Models.getModel("barrel.obj"), Textures.getTexture("barrel_nuclear_waste_damaged.png"), 100000, CONVEX);
-				barrel.setPosition(new Vector3f(i, -10, 0));
+				Entity barrel = new Entity(Models.getModel("barrel.obj"), Textures.getTexture("barrel_nuclear_waste_damaged.png"), 100, CONVEX);
+				barrel.setPosition(new Vector3f(i, 2, 0));
 				addEntity(barrel);
 			} 
-			for(float y = -11.5f; y < -6; y+= 1.) {
-				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("wood.png"), 5000, CONVEX);
+			for(float y = 0f; y < 6; y+= 1.) {
+				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("wood.png"), 50000, CONVEX);
 				cube.setPosition(new Vector3f(0, y, 5));
 				addEntity(cube);
 			} 
@@ -59,10 +59,10 @@ public class Papiertaschentuch {
 
 	public static void main(String[] args) {
 		Papiertaschentuch p = new Papiertaschentuch();
-		Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("tile.png"), 0, CONCAVE);
+		Entity room = new Entity(Models.getModel("simple_environement.obj"), Textures.getTexture("bricks.png"), 0, CONCAVE);
 		p.addEntity(room);
 		p.start();
 		Light l = Lights.createLight();
-		l.setPosition(new Vector3f(0, 0, 0));
+		l.setPosition(new Vector3f(0, 20, 0));
 	}
 }
