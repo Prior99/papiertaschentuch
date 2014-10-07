@@ -85,7 +85,6 @@ public class Log extends Thread {
 		print(msg);
 	    }
 	    catch (InterruptedException e) {
-		e.printStackTrace();
 		shutdown();
 		break;
 	    }

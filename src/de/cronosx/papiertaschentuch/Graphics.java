@@ -6,6 +6,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.util.glu.GLU.*;
 
 public class Graphics extends Thread {
@@ -87,6 +88,7 @@ public class Graphics extends Thread {
 
     private void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(Shaders.getShader("default").getID());
 	glLoadIdentity();
 	player.transform();
 	graphicsTickListeners.stream().forEach((l) -> {

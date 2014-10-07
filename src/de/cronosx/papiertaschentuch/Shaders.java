@@ -30,27 +30,28 @@ public class Shaders {
 	public Shader(String filename) {
 	    id = glCreateProgram();
 	    try {
-		int vertID = loadShader(filename + ".vert", GL_VERTEX_SHADER);
-		int fragID = loadShader(filename + ".frag", GL_FRAGMENT_SHADER);
+		int vertID = loadShader("shader/" + filename + ".vert", GL_VERTEX_SHADER);
+		int fragID = loadShader("shader/" + filename + ".frag", GL_FRAGMENT_SHADER);
 		glAttachShader(id, vertID);
 		glAttachShader(id, fragID);
 		glLinkProgram(id);
 		String log = glGetProgramInfoLog(id, 128000);
 		if(glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
-		    Log.fatal("Error linking shaders of " + filename + " together, please see the following log:\n" + log);
+		    Log.fatal("Error linking shaders of \"" + filename + "\" together, please see the following log:\n" + log);
 		}
+		glValidateProgram(id);
 		if(glGetProgrami(id, GL_VALIDATE_STATUS) == GL_FALSE) {
-		    Log.fatal("Error validating shader " + filename + ", please see the following log:\n" + log);
+		    Log.fatal("Error validating shader \"" + filename + "\", please see the following log:\n" + log);
 		}
 	    }
 	    catch(FileNotFoundException e) {
-		Log.fatal("Could not open file for shader " + filename + ": " + e.getMessage());
+		Log.fatal("Could not open file for shader \"" + filename + "\": " + e.getMessage());
 	    }
 	    catch(IOException e) {
-		Log.fatal("Unable to read file for shader " + filename + ": " + e.getMessage());
+		Log.fatal("Unable to read file for shader \"" + filename + "\": " + e.getMessage());
 	    }
 	    catch(IllegalStateException e) {
-		Log.fatal("Could not compile shader " + filename + ":" + e.getMessage());
+		Log.fatal("Could not compile shader \"" + filename + "\": " + e.getMessage());
 	    }
 	}
 	
@@ -77,10 +78,10 @@ public class Shaders {
 		    int status = glGetShaderi(handle, GL_COMPILE_STATUS);
 		    String log = GL20.glGetShaderInfoLog(handle, 128000);
 		    if(status == GL_FALSE) {
-			throw new IllegalStateException("Unable to compile Shader " + filename + ", the log is as follows:\n" + log);
+			throw new IllegalStateException("Unable to compile Shader \"" + filename + "\", the log is as follows:\n" + log);
 		    }
 		    else {
-			Log.debug("Successfully compiled shader " + filename + ", the log is as follows:\n" + log);
+			Log.debug("Successfully compiled shader \"" + filename + "\", the log is as follows:\n" + log);
 		    }
 		    return handle;
 		}

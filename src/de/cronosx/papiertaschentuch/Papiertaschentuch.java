@@ -1,12 +1,9 @@
 package de.cronosx.papiertaschentuch;
 
-import de.cronosx.papiertaschentuch.Config.Parser;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONCAVE;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONVEX;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.vecmath.Vector3f;
 
 public class Papiertaschentuch {
