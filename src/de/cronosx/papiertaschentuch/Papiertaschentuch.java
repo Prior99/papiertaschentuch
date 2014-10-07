@@ -14,7 +14,14 @@ public class Papiertaschentuch {
     private boolean exited;
 
     public Papiertaschentuch() {
-	Log.debug("Papiertaschentuch initialized.");
+	Log.onError((msg) -> {
+	    Log.debug("An error occured. Shutting down.");
+	    shutdown();
+	});
+	Log.onFatal((msg) -> {
+	    Log.debug("A fatal error occured. Shutting down.");
+	    shutdown();
+	});
 	exited = false;
 	player = new Player();
 	entities = new Entities();
@@ -44,6 +51,7 @@ public class Papiertaschentuch {
 	    shutdown();
 	});
 	activatePlayer(player);
+	Log.debug("Papiertaschentuch initialized.");
     }
     
     private void shutdown() {

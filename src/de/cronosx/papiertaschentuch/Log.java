@@ -1,8 +1,10 @@
 package de.cronosx.papiertaschentuch;
 
 import static de.cronosx.papiertaschentuch.Log.Level.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -10,11 +12,21 @@ public class Log extends Thread {
     
     private static final Log instance = new Log();
     private final LinkedBlockingQueue<Message> queue;
+    private static final List<LogEventListener> fatalListeners = new ArrayList<>();
+    private static final List<LogEventListener> errorListeners = new ArrayList<>();
 
     public Log() {
 	super("Loggerthread");
 	queue = new LinkedBlockingQueue<>();
 	this.start();
+    }
+    
+    public static void onError(LogEventListener l) {
+	errorListeners.add(l);
+    }
+    
+    public static void onFatal(LogEventListener l) {
+	fatalListeners.add(l);
     }
 
     public void log(String text, Level level) {
@@ -36,10 +48,16 @@ public class Log extends Thread {
 
     public static void error(String text) {
 	instance.log(text, ERROR);
+	errorListeners.stream().forEach((l) -> {
+	    l.onLogEvent(text);
+	});
     }
 
     public static void fatal(String text) {
 	instance.log(text, FATAL);
+	fatalListeners.stream().forEach((l) -> {
+	    l.onLogEvent(text);
+	});
     }
 
     public static void shutdown() {
@@ -149,5 +167,8 @@ public class Log extends Thread {
 	ERROR,
 	FATAL
     }
-
+    
+    public static interface LogEventListener {
+	public void onLogEvent(String message);
+    }
 }
