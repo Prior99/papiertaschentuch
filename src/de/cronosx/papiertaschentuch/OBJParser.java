@@ -199,9 +199,9 @@ public class OBJParser {
 				    break;
 			    }
 			} catch (UnsupportedOperationException e) {
-			    System.out.println("Unsupported operation in line " + num + " of OBJ-File: " + e.getMessage());
+			    Log.warn("Unsupported operation in line " + num + " of OBJ-File " + file.getName() + ": " + e.getMessage());
 			} catch (IllegalArgumentException e) {
-			    System.out.println("Illegal argument in line " + num + " of OBJ-File: " + e.getMessage());
+			    Log.warn("Illegal argument in line " + num + " of OBJ-File " + file.getName() + ": " + e.getMessage());
 			}
 		    }
 		}
@@ -212,14 +212,14 @@ public class OBJParser {
 		build();
 		return true;
 	    } catch (IllegalArgumentException e) {
-		System.out.println("Verification failed: " + e.getMessage());
+		Log.error("Verification failed: " + e.getMessage());
 		return false;
 	    }
 	} catch (FileNotFoundException e) {
-	    System.out.println("Could not find file.");
+	    Log.error("Could not find file.");
 	    return false;
 	} catch (IOException e) {
-	    System.out.println("Error while reading file.");
+	    Log.error("Error while reading file.");
 	    return false;
 	}
     }

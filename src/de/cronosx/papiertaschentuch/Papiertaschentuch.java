@@ -11,8 +11,11 @@ public class Papiertaschentuch {
     private final Physics physics;
     private final Player player;
     private final Entities entities;
+    private boolean exited;
 
     public Papiertaschentuch() {
+	Log.debug("Papiertaschentuch initialized.");
+	exited = false;
 	player = new Player();
 	entities = new Entities();
 	graphics = new Graphics(1440, 1024, entities, player);
@@ -35,12 +38,23 @@ public class Papiertaschentuch {
 	    physics.tick();
 	});
 	game.onShutdown(() -> {
-	    graphics.shutdown();
+	    shutdown();
 	});
 	graphics.onShutdown(() -> {
-	    game.shutdown();
+	    shutdown();
 	});
 	activatePlayer(player);
+    }
+    
+    private void shutdown() {
+	if(!exited) {
+	    exited = true;
+	    Log.debug("Shutting down.");
+	    graphics.shutdown();
+	    game.shutdown();
+	    Log.debug("Good bye!");
+	    Log.shutdown();
+	}
     }
 
     public void activatePlayer(Player player) {
