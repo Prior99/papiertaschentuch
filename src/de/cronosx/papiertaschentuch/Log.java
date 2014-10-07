@@ -35,15 +35,21 @@ public class Log extends Thread {
     }
 
     public static void info(String text) {
-	instance.log(text, INFO);
+	if(Papiertaschentuch.getConfig().getBool("Log Info", true)) {
+	    instance.log(text, INFO);
+	}
     }
 
     public static void debug(String text) {
-	instance.log(text, DEBUG);
+	if(Papiertaschentuch.getConfig().getBool("Log Debug", true)) {
+	    instance.log(text, DEBUG);
+	}
     }
 
     public static void warn(String text) {
-	instance.log(text, WARNING);
+	if(Papiertaschentuch.getConfig().getBool("Log Warnings", true)) {
+	    instance.log(text, WARNING);
+	}
     }
 
     public static void error(String text) {
@@ -78,7 +84,7 @@ public class Log extends Thread {
 		Message msg = queue.take();
 		print(msg);
 	    }
-	    catch (Exception e) {
+	    catch (InterruptedException e) {
 		e.printStackTrace();
 		shutdown();
 		break;

@@ -1,11 +1,17 @@
 package de.cronosx.papiertaschentuch;
 
+import de.cronosx.papiertaschentuch.Config.Parser;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONCAVE;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONVEX;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.vecmath.Vector3f;
 
 public class Papiertaschentuch {
 
+    public static Config config;
     private final Game game;
     private final Graphics graphics;
     private final Physics physics;
@@ -13,19 +19,27 @@ public class Papiertaschentuch {
     private final Entities entities;
     private boolean exited;
 
+    public static Config getConfig() {
+	return config;
+    }
+    
     public Papiertaschentuch() {
 	Log.onError((msg) -> {
-	    Log.debug("An error occured. Shutting down.");
-	    shutdown();
+	    if(getConfig().getBool("Exit on errors", true)) {
+		Log.debug("An error occured. Shutting down.");
+		shutdown();
+	    }
 	});
 	Log.onFatal((msg) -> {
-	    Log.debug("A fatal error occured. Shutting down.");
-	    shutdown();
+	    if(getConfig().getBool("Exit on fatal errors", true)) {
+		Log.debug("A fatal error occured. Shutting down.");
+		shutdown();
+	    }
 	});
 	exited = false;
 	player = new Player();
 	entities = new Entities();
-	graphics = new Graphics(1440, 1024, entities, player);
+	graphics = new Graphics(getConfig().getInt("Screen width", 800), getConfig().getInt("Screen height", 600), entities, player);
 	physics = new Physics(entities, player);
 	game = new Game(entities);
 	graphics.onReady(() -> {
@@ -80,11 +94,27 @@ public class Papiertaschentuch {
     }
 
     public static void main(String[] args) {
-	Papiertaschentuch p = new Papiertaschentuch();
-	Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("tile.png"), 0, CONCAVE);
-	p.addEntity(room);
-	p.start();
-	Light l = Lights.createLight();
-	l.setPosition(new Vector3f(0, 0, 0));
+	config = null;
+	try {
+	    config = new Config("engine.cfg");
+	    config.parse();
+	}
+	catch(FileNotFoundException e) {
+	    Log.warn("Unable to open configfile: " + e.getMessage());
+	}
+	catch(IOException e) {
+	    Log.warn("Unable to read configfile. An IOException occured: " + e.getMessage());
+	}
+	if(config != null) {
+	    Papiertaschentuch p = new Papiertaschentuch();
+	    Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("tile.png"), 0, CONCAVE);
+	    p.addEntity(room);
+	    p.start();
+	    Light l = Lights.createLight();
+	    l.setPosition(new Vector3f(0, 0, 0));
+	}
+	else {
+	    Log.fatal("Unable to parse config. Aborting.");
+	}
     }
 }
