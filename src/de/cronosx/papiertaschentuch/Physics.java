@@ -10,7 +10,6 @@ import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
 
 public class Physics {
-
 	private Entities entities;
 	private DefaultCollisionConfiguration collisionConfiguration;
 	//private ObjectArrayList<CollisionShape> collisionShapes = new ObjectArrayList<CollisionShape>();

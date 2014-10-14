@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 public class Entity {
-
 	public enum CollisionType {
 		CONCAVE,
 		CONVEX
