@@ -10,6 +10,7 @@ import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
 
 public class Physics {
+
 	private Entities entities;
 	private DefaultCollisionConfiguration collisionConfiguration;
 	//private ObjectArrayList<CollisionShape> collisionShapes = new ObjectArrayList<CollisionShape>();
@@ -29,10 +30,10 @@ public class Physics {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, sweepBP, solver, collisionConfiguration);
 		dynamicsWorld.addAction(player.getKinematicCharacterController());
-		dynamicsWorld.addCollisionObject(player.getGhostObject(), CollisionFilterGroups.CHARACTER_FILTER, (short)(CollisionFilterGroups.ALL_FILTER | CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
+		dynamicsWorld.addCollisionObject(player.getGhostObject(), CollisionFilterGroups.CHARACTER_FILTER, (short) (CollisionFilterGroups.ALL_FILTER | CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
 		sweepBP.getOverlappingPairCache().setInternalGhostPairCallback(new GhostPairCallback());
 		dynamicsWorld.setGravity(new Vector3f(0f, -10f, 0f));
-		
+
 	}
 
 	public void addEntity(Entity e) {
@@ -51,11 +52,11 @@ public class Physics {
 			entity.updatePhysicsTransform(nextTransform.origin, quadRotationToEulerAngles(quat));
 		});
 	}
-	
+
 	public static Vector3f quadRotationToEulerAngles(Quat4f quat) {
 		return new Vector3f(
-			(float) Math.atan2(2 * (quat.w * quat.x + quat.y * quat.z), 1 - 2 * (quat.x * quat.x + quat.y * quat.y)),
-			(float) Math.asin(2 * (quat.w * quat.y - quat.z * quat.x)),
-			(float) Math.atan2(2 * (quat.x * quat.z + quat.x * quat.y), 1 - 2 * (quat.y * quat.y + quat.z * quat.z)));
+				(float) Math.atan2(2 * (quat.w * quat.x + quat.y * quat.z), 1 - 2 * (quat.x * quat.x + quat.y * quat.y)),
+				(float) Math.asin(2 * (quat.w * quat.y - quat.z * quat.x)),
+				(float) Math.atan2(2 * (quat.x * quat.z + quat.x * quat.y), 1 - 2 * (quat.y * quat.y + quat.z * quat.z)));
 	}
 }

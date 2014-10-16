@@ -3,28 +3,42 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.linearmath.*;
+import de.cronosx.papiertaschentuch.Shaders.Shader;
 import javax.vecmath.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Entity {
+
 	public enum CollisionType {
+
 		CONCAVE,
 		CONVEX
 	}
-	
+
 	private Vector3f position, rotation;
 	private Model model;
 	private Texture texture;
 	private RigidBody rigidBody;
 	protected float mass;
+	private Shader shader;
 	protected CollisionType collisionType;
+	private boolean bound;
 
 	public Entity() {
+		bound = false;
 		position = new Vector3f();
 		rotation = new Vector3f();
 		collisionType = CollisionType.CONVEX;
+	}
+
+	private void bind() {
+		if (!bound) {
+			bound = true;
+			shader = Shaders.getShader("default");
+		}
 	}
 
 	public RigidBody getRigidBody() {
@@ -39,15 +53,15 @@ public class Entity {
 		this.texture = texture;
 		initPhysics();
 	}
-	
+
 	public Vector3f getRotation() {
 		return rotation;
 	}
-	
+
 	public Vector3f getPosition() {
 		return position;
 	}
-	
+
 	protected void initPhysics() {
 		Vector3f inertia = new Vector3f(0, 0, 0);
 		Transform transform = new Transform();
@@ -63,12 +77,11 @@ public class Entity {
 	public Entity(Model model, Texture texture, float mass) {
 		this(model, texture, mass, mass == 0 ? CollisionType.CONCAVE : CollisionType.CONVEX);
 	}
-	
+
 	protected CollisionShape getCollisionShape() {
-		if(collisionType == CollisionType.CONVEX) {
+		if (collisionType == CollisionType.CONVEX) {
 			return model.getConvexCollisionShape();
-		}
-		else {
+		} else {
 			return model.getConcaveCollisionShape();
 		}
 	}
@@ -117,14 +130,21 @@ public class Entity {
 	}
 
 	public void draw() {
-		if(model != null && texture != null) {
+		bind();
+		draw(shader);
+	}
+
+	public void draw(Shader activeShader) {
+		if (model != null && texture != null) {
 			glPushMatrix();
+			glUseProgram(activeShader.getID());
 			glTranslatef(position.x, position.y, position.z);
 			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
 			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
 			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
+			activeShader.setUniform("texture", texture.retrieveTextureID());
 			model.draw();
 			glPopMatrix();
 		}
