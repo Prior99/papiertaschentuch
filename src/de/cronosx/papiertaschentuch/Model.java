@@ -13,10 +13,8 @@ public abstract class Model {
 	protected FloatBuffer vertexBuffer, normalBuffer, textureMapBuffer;
 	protected IntBuffer facesBuffer;
 	protected int indexCount;
-	protected boolean bound;
 
 	public Model() {
-		bound = false;
 	}
 
 	protected abstract void load();
@@ -55,10 +53,13 @@ public abstract class Model {
 		glBufferData(GL_ARRAY_BUFFER, textureMapBuffer, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, facesBufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, facesBuffer, GL_STATIC_DRAW);
-		bound = true;
+	}
+	
+	public int getIndexCount() {
+		return indexCount;
 	}
 
-	private void loadBuffers() {
+	public void loadBuffers() {
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, textureBufferID);
@@ -66,14 +67,6 @@ public abstract class Model {
 		glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
 		glNormalPointer(GL_FLOAT, 0, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, facesBufferID);
-	}
-
-	public void draw() {
-		if (!bound) {
-			bind();
-		}
-		loadBuffers();
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 	}
 
 	protected abstract float[] getVertices();

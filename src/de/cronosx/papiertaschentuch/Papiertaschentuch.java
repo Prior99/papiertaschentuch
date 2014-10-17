@@ -41,11 +41,6 @@ public class Papiertaschentuch {
 		game = new Game(entities);
 		graphics.onReady(() -> {
 			game.start();
-			for (int i = -6; i < 6; i += 2) {
-				Entity barrel = new Entity(Models.getModel("barrel.obj"), Textures.getTexture("barrel_nuclear_waste_damaged.png"), 100, CONVEX);
-				barrel.setPosition(new Vector3f(i, 2, 0));
-				addEntity(barrel);
-			}
 			for (float y = 0f; y < 6; y += 1.) {
 				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("wood.png"), 50000, CONVEX);
 				cube.setPosition(new Vector3f(0, y, 5));

@@ -23,22 +23,12 @@ public class Entity {
 	private Texture texture;
 	private RigidBody rigidBody;
 	protected float mass;
-	private Shader shader;
 	protected CollisionType collisionType;
-	private boolean bound;
 
 	public Entity() {
-		bound = false;
 		position = new Vector3f();
 		rotation = new Vector3f();
 		collisionType = CollisionType.CONVEX;
-	}
-
-	private void bind() {
-		if (!bound) {
-			bound = true;
-			shader = Shaders.getShader("default");
-		}
 	}
 
 	public RigidBody getRigidBody() {
@@ -128,25 +118,12 @@ public class Entity {
 	public void rotate(Vector3f delta) {
 		setRotation(new Vector3f(rotation.x + delta.x, rotation.y + delta.y, rotation.z + delta.z));
 	}
-
-	public void draw() {
-		bind();
-		draw(shader);
+	
+	public Model getModel() {
+		return model;
 	}
-
-	public void draw(Shader activeShader) {
-		if (model != null && texture != null) {
-			glPushMatrix();
-			glUseProgram(activeShader.getID());
-			glTranslatef(position.x, position.y, position.z);
-			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
-			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
-			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
-			activeShader.setUniform("texture", texture.retrieveTextureID());
-			model.draw();
-			glPopMatrix();
-		}
+	
+	public Texture getTexture() {
+		return texture;
 	}
 }

@@ -2,11 +2,14 @@ package de.cronosx.papiertaschentuch;
 
 import de.cronosx.papiertaschentuch.Shaders.Shader;
 import java.util.*;
+import javax.vecmath.Vector3f;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.util.glu.GLU.*;
 
@@ -19,6 +22,7 @@ public class Graphics extends Thread {
 	private List<ShutdownListener> shutdownListeners;
 	private boolean exit;
 	private Player player;
+	private Shader defaultShader;
 
 	public Graphics(int width, int height, Entities entities, Player player) {
 		super("Graphicsthread");
@@ -85,6 +89,7 @@ public class Graphics extends Thread {
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
+		defaultShader = Shaders.getShader("default");
 	}
 
 	private void render() {
@@ -98,11 +103,36 @@ public class Graphics extends Thread {
 			l.applyGL();
 		});
 		entities.forEach((e) -> {
-			e.draw();
+			drawEntity(e);
 		});
 		Display.update();
 	}
-
+	
+	private void drawEntity(Entity e) {
+		Model model = e.getModel();
+		Texture texture = e.getTexture();
+		Vector3f position = e.getPosition();
+		Vector3f rotation = e.getRotation();
+		if (model != null && texture != null) {
+			glPushMatrix();
+			glUseProgram(defaultShader.getID());
+			
+			glTranslatef(position.x, position.y, position.z);
+			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
+			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
+			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
+			drawModel(e.getModel());
+			glPopMatrix();
+		}
+	}
+	
+	private void drawModel(Model model) {
+		model.loadBuffers();
+		glDrawElements(GL_TRIANGLES, model.getIndexCount(), GL_UNSIGNED_INT, 0);
+	}
+	
 	@Override
 	public void run() {
 		setup();
