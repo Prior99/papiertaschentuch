@@ -1,5 +1,6 @@
 package de.cronosx.papiertaschentuch;
 
+import com.bulletphysics.linearmath.*;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONCAVE;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONVEX;
 import java.io.FileNotFoundException;
@@ -38,12 +39,22 @@ public class Papiertaschentuch {
 		entities = new Entities();
 		graphics = new Graphics(getConfig().getInt("Screen width", 800), getConfig().getInt("Screen height", 600), entities, player);
 		physics = new Physics(entities, player);
+		if(getConfig().getBool("Draw Physics Debug", false)) {
+			DebugDrawer dDraw = new DebugDrawer();
+			physics.setDebugDrawer(dDraw);
+			dDraw.setDebugMode(DebugDrawModes.MAX_DEBUG_DRAW_MODE | DebugDrawModes.DRAW_AABB);
+			graphics.onGraphicsTick(() -> {
+				dDraw.begin();
+				physics.debugDraw();
+				dDraw.end();
+			});
+		}
 		game = new Game(entities);
 		graphics.onReady(() -> {
 			game.start();
-			for (float y = 0f; y < 6; y += 1.) {
-				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("wood.png"), 50000, CONVEX);
-				cube.setPosition(new Vector3f(0, y, 5));
+			for (float y = 0f; y < 6; y += 1.1) {
+				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
+				cube.setPosition(new Vector3f(0, y - 12, 5));
 				addEntity(cube);
 			}
 		});
@@ -97,11 +108,11 @@ public class Papiertaschentuch {
 		}
 		if (config != null) {
 			Papiertaschentuch p = new Papiertaschentuch();
-			Entity room = new Entity(Models.getModel("simple_environement.obj"), Textures.getTexture("bricks.png"), 0, CONCAVE);
+			Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
 			p.addEntity(room);
 			p.start();
 			Light l = Lights.createLight();
-			l.setPosition(new Vector3f(0, 20, 0));
+			l.setPosition(new Vector3f(0, 0, 0));
 		} else {
 			Log.fatal("Unable to parse config. Aborting.");
 		}

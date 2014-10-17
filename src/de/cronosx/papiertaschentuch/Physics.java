@@ -30,19 +30,28 @@ public class Physics {
 		solver = new SequentialImpulseConstraintSolver();
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, sweepBP, solver, collisionConfiguration);
 		dynamicsWorld.addAction(player.getKinematicCharacterController());
+		dynamicsWorld.addRigidBody(player.getRigidBody());
 		dynamicsWorld.addCollisionObject(player.getGhostObject(), CollisionFilterGroups.CHARACTER_FILTER, (short) (CollisionFilterGroups.ALL_FILTER | CollisionFilterGroups.STATIC_FILTER | CollisionFilterGroups.DEFAULT_FILTER));
 		sweepBP.getOverlappingPairCache().setInternalGhostPairCallback(new GhostPairCallback());
 		dynamicsWorld.setGravity(new Vector3f(0f, -10f, 0f));
-
 	}
 
 	public void addEntity(Entity e) {
 		RigidBody body = e.getRigidBody();
 		dynamicsWorld.addRigidBody(body);
 	}
+	
+	public void setDebugDrawer(DebugDrawer dDraw) {
+		dynamicsWorld.setDebugDrawer(dDraw);
+	}
+	
+	public void debugDraw() {
+		dynamicsWorld.debugDrawWorld();
+	}
 
 	public void tick() {
-		dynamicsWorld.stepSimulation(1f / 60f);
+		player.tick();
+		dynamicsWorld.stepSimulation(1f/60f);
 		entities.forEach((entity) -> {
 			Transform nextTransform = new Transform();
 			RigidBody rigidBody = entity.getRigidBody();

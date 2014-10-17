@@ -39,6 +39,9 @@ public class Input {
 						(float) Math.sin(-player.getRotation().y - Math.PI / 2), 0f,
 						(float) Math.cos(-player.getRotation().y - Math.PI / 2)));
 			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) { //Jump
+				player.jump();
+			}
 			player.setWalkDirection(walkDirection);
 			int dx = Mouse.getDX(),
 					dy = Mouse.getDY();

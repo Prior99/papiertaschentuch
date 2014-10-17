@@ -3,12 +3,7 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.linearmath.*;
-import de.cronosx.papiertaschentuch.Shaders.Shader;
 import javax.vecmath.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Entity {
 

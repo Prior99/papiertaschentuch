@@ -1,14 +1,10 @@
-attribute vec3 aVertexPosition;
-attribute vec2 aTextureCoord;
-attribute vec3 aNormals;
-
 varying vec2 vTextureCoord;
-//varying vec3 vTransformedNormal;
-varying vec4 vPosition;
+varying vec3 normal;
+varying vec3 vertexToLight;
 
 void main() {
-	vPosition = gl_ModelMatrix * vec4(aVertexPosition, 1.);
-    gl_Position = gl_ProjectionMatrix * gl_ViewMatrix * gl_Vertex;
-    vTextureCoord = aTextureCoord;
-    //vTransformedNormal = uNormalMatrix * aNormals;
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    vTextureCoord = vec2(gl_MultiTexCoord0);
+	normal = gl_NormalMatrix * gl_Normal;
+	vertexToLight = normalize(vec3(gl_LightSource[0].position - gl_ModelViewMatrix * gl_Vertex));
 }

@@ -15,11 +15,11 @@ import static org.lwjgl.util.glu.GLU.*;
 
 public class Graphics extends Thread {
 
-	private int screenWidth, screenHeight;
-	private Entities entities;
-	private List<ReadyListener> readyListeners;
-	private List<GraphicsTickListener> graphicsTickListeners;
-	private List<ShutdownListener> shutdownListeners;
+	private final int screenWidth, screenHeight;
+	private final Entities entities;
+	private final List<ReadyListener> readyListeners;
+	private final List<GraphicsTickListener> graphicsTickListeners;
+	private final List<ShutdownListener> shutdownListeners;
 	private boolean exit;
 	private Player player;
 	private Shader defaultShader;
@@ -64,7 +64,9 @@ public class Graphics extends Thread {
 
 	private void setupMouse() {
 		Mouse.setClipMouseCoordinatesToWindow(true);
-		Mouse.setGrabbed(true);
+		if(Papiertaschentuch.getConfig().getBool("Grab Mouse", true)) {
+			Mouse.setGrabbed(true);
+		}
 	}
 
 	private void setupDisplay() throws LWJGLException {
@@ -77,18 +79,20 @@ public class Graphics extends Thread {
 		glPushAttrib(GL_ENABLE_BIT | GL_TRANSFORM_BIT | GL_HINT_BIT | GL_COLOR_BUFFER_BIT | GL_SCISSOR_BIT | GL_LINE_BIT | GL_TEXTURE_BIT);
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
-		gluPerspective(45.0f, screenWidth / (float) screenHeight, 0.1f, 100.0f);
+		gluPerspective(45.0f, screenWidth / (float) screenHeight, 0.001f, 1000.0f);
 		glShadeModel(GL_SMOOTH); // Enable Smooth Shading
 		glClearColor(0.5f, 0.5f, 1.0f, 0.5f); // Lightblue Background
 		glClearDepth(1.0f); // Depth Buffer Setup
 		glEnable(GL_DEPTH_TEST); // Enables Depth Testing
-		glEnable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 		glDepthFunc(GL_LEQUAL); // The Type Of Depth Testing To Do
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); // Really Nice Perspective Calculations
 		glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		defaultShader = Shaders.getShader("default");
 	}
 
@@ -102,6 +106,7 @@ public class Graphics extends Thread {
 		Lights.forEach((l) -> {
 			l.applyGL();
 		});
+		glUseProgram(defaultShader.getID());
 		entities.forEach((e) -> {
 			drawEntity(e);
 		});
@@ -115,8 +120,6 @@ public class Graphics extends Thread {
 		Vector3f rotation = e.getRotation();
 		if (model != null && texture != null) {
 			glPushMatrix();
-			glUseProgram(defaultShader.getID());
-			
 			glTranslatef(position.x, position.y, position.z);
 			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
 			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
