@@ -10,7 +10,7 @@ public class Lights {
 	public static Light createLight() {
 		for (int i = 0; i < lights.length; i++) {
 			if (lights[i] == null) {
-				int id = GL11.GL_LIGHT0 + i;
+				int id = i;
 				Light light = new Light(id);
 				lights[i] = light;
 				return light;

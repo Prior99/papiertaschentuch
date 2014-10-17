@@ -103,9 +103,6 @@ public class Graphics extends Thread {
 		graphicsTickListeners.stream().forEach((l) -> {
 			l.onGraphicsTick();
 		});
-		Lights.forEach((l) -> {
-			l.applyGL();
-		});
 		glUseProgram(defaultShader.getID());
 		entities.forEach((e) -> {
 			drawEntity(e);

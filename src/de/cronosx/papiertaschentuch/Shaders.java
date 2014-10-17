@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.vecmath.*;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import org.lwjgl.opengl.GL20;
 import static org.lwjgl.opengl.GL20.*;
@@ -24,7 +25,7 @@ public class Shaders {
 			return shader;
 		}
 	}
-
+	
 	public static class Shader {
 
 		private int id;
@@ -55,25 +56,29 @@ public class Shaders {
 				Log.fatal("Could not compile shader \"" + filename + "\": " + e.getMessage());
 			}
 		}
-
-		public void setUniform(String name, float param) {
-			if (uniformLocations.containsKey(name)) {
-				glUniform1f(uniformLocations.get(name), param);
-			} else {
+		
+		public void setUniform(String name, Vector3f[] param) {
+			if(!uniformLocations.containsKey(name))  {
 				int address = glGetUniformLocation(getID(), name);
 				uniformLocations.put(name, address);
-				glUniform1f(address, param);
 			}
+			//TODO
+		}
+		
+		public void setUniform(String name, float param) {
+			if(!uniformLocations.containsKey(name)) {
+				int address = glGetUniformLocation(getID(), name);
+				uniformLocations.put(name, address);
+			}
+			glUniform1f(uniformLocations.get(name), param);
 		}
 
 		public void setUniform(String name, int param) {
-			if (uniformLocations.containsKey(name)) {
-				glUniform1i(uniformLocations.get(name), param);
-			} else {
+			if(!uniformLocations.containsKey(name)) {
 				int address = glGetUniformLocation(getID(), name);
 				uniformLocations.put(name, address);
-				glUniform1i(address, param);
 			}
+			glUniform1i(uniformLocations.get(name), param);
 		}
 
 		public int getID() {

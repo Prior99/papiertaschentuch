@@ -5,6 +5,7 @@ import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONCAVE;
 import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONVEX;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.atomic.*;
 import javax.vecmath.Vector3f;
 
 public class Papiertaschentuch {
@@ -17,6 +18,10 @@ public class Papiertaschentuch {
 	private final Entities entities;
 	private boolean exited;
 
+	public Game getGame() {
+		return game;
+	}
+	
 	public static Config getConfig() {
 		return config;
 	}
@@ -52,11 +57,6 @@ public class Papiertaschentuch {
 		game = new Game(entities);
 		graphics.onReady(() -> {
 			game.start();
-			for (float y = 0f; y < 6; y += 1.1) {
-				Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
-				cube.setPosition(new Vector3f(0, y - 12, 5));
-				addEntity(cube);
-			}
 		});
 		game.onTick(() -> {
 			physics.tick();
@@ -113,6 +113,13 @@ public class Papiertaschentuch {
 			p.start();
 			Light l = Lights.createLight();
 			l.setPosition(new Vector3f(0, 0, 0));
+			final AtomicInteger i = new AtomicInteger(0);
+			p.getGame().onTick(() -> {
+				if(i.incrementAndGet() < 100) {
+					Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
+					p.addEntity(cube);
+				}
+			});
 		} else {
 			Log.fatal("Unable to parse config. Aborting.");
 		}
