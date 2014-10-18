@@ -128,7 +128,7 @@ public class Log extends Thread {
 			sb.append("(").append(calendar.get(Calendar.YEAR)).append("-")
 					.append(String.format("%02d", calendar.get(Calendar.MONTH))).append("-")
 					.append(String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH))).append(" ")
-					.append(String.format("%02d", calendar.get(Calendar.HOUR))).append(":")
+					.append(String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY))).append(":")
 					.append(String.format("%02d", calendar.get(Calendar.MINUTE))).append(":")
 					.append(String.format("%02d", calendar.get(Calendar.SECOND)))
 					.append(") [");
