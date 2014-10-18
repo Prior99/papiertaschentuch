@@ -26,14 +26,16 @@ public class Config {
 	public void parse() throws IOException {
 		BufferedReader rd = new BufferedReader(new FileReader(file));
 		String line;
-		int lineNum = 0;
+		int lineNum = 1;
 		Parser p = new Parser();
 		while ((line = rd.readLine()) != null) {
 			line = line.trim();
 			if (!line.startsWith("#")) {
 				try {
-					p.parse(line);
-					assocs.put(p.getKey(), p.getValue());
+					if(line.length() > 0) {
+						p.parse(line);
+						assocs.put(p.getKey(), p.getValue());
+					}
 				} catch (IllegalArgumentException e) {
 					Log.warn("Error parsing line " + lineNum + " of config file " + file.getName() + ": " + e.getMessage());
 				}
@@ -104,7 +106,8 @@ public class Config {
 				parseEOF();
 			} else if (cur == '\t' || cur == ' ') {
 				parseWhitespace();
-			} else {
+			}
+			else {
 				appendChar(cur);
 				parseRaw();
 			}
