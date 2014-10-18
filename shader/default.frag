@@ -1,16 +1,19 @@
+#define LIGHT_AMOUNT 8
+
 uniform sampler2D uSampler;
 uniform vec3 uPlayerPosition;
 
 varying vec2 vTextureCoord;
-varying vec3 normal;
-varying vec3 vertex;
+varying vec3 vNormal;
+varying vec3 vVertex;
+varying vec3[LIGHT_AMOUNT] vLightPositions;
 
 void main() {
-	vec3 direction = normalize(vec3(gl_ModelViewMatrix * gl_LightSource[0].position) - vertex);
-	vec3 negativeVectorDirection = normalize(-vertex);
-	vec3 reflection = normalize(-reflect(direction, normal));
+	vec3 direction = normalize(vec3(vLightPositions[0]) - vVertex);
+	vec3 negativeVectorDirection = normalize(-vVertex);
+	vec3 reflection = normalize(-reflect(direction, vNormal));
 
-	vec4 diffuseLight = gl_FrontLightProduct[0].diffuse * max(dot(normal, direction), 0.0);
+	vec4 diffuseLight = gl_FrontLightProduct[0].diffuse * max(dot(vNormal, direction), 0.0);
 	diffuseLight = clamp(diffuseLight, 0.0, 1.0);
 
 	vec4 specularLight = gl_FrontLightProduct[0].specular

@@ -3,14 +3,15 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.*;
 import com.bulletphysics.dynamics.*;
 import com.bulletphysics.linearmath.*;
+import static de.cronosx.papiertaschentuch.Entity.CollisionType.*;
 import javax.vecmath.*;
 
 public class Entity {
 
 	public enum CollisionType {
-
 		CONCAVE,
-		CONVEX
+		CONVEX, 
+		BOX
 	}
 
 	private Vector3f position, rotation;
@@ -19,6 +20,7 @@ public class Entity {
 	private RigidBody rigidBody;
 	protected float mass;
 	protected CollisionType collisionType;
+	private Vector3f boxBoundries;
 
 	public Entity() {
 		position = new Vector3f();
@@ -37,6 +39,20 @@ public class Entity {
 		this.model = model;
 		this.texture = texture;
 		initPhysics();
+		if(collisionType == BOX) {
+			throw new IllegalArgumentException("If collision type is box, you have to specify it's boundries.");
+		}
+	}
+	
+	public Entity(Model model, Texture texture, float mass, CollisionType collisionType, Vector3f boxDim) {
+		this();
+		this.mass = mass;
+		this.collisionType = collisionType;
+		this.model = model;
+		this.texture = texture;
+		this.boxBoundries = boxDim;
+		initPhysics();
+		
 	}
 
 	public Vector3f getRotation() {
@@ -64,10 +80,15 @@ public class Entity {
 	}
 
 	protected CollisionShape getCollisionShape() {
-		if (collisionType == CollisionType.CONVEX) {
-			return model.getConvexCollisionShape();
-		} else {
-			return model.getConcaveCollisionShape();
+		switch(collisionType) {
+			case CONVEX:
+				return model.getConvexCollisionShape();
+			case CONCAVE:
+				return model.getConcaveCollisionShape();
+			case BOX:
+				return new BoxShape(this.boxBoundries);
+			default:
+				throw new IllegalArgumentException("Unsupported Collisionshape");
 		}
 	}
 

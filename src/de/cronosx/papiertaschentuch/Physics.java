@@ -51,8 +51,8 @@ public class Physics {
 
 	public void tick() {
 		player.tick();
-		dynamicsWorld.stepSimulation(1f/60f);
-		entities.forEach((entity) -> {
+		dynamicsWorld.stepSimulation(1/60f, 1, 1/60f);
+		entities.parallelForEach((entity) -> {
 			Transform nextTransform = new Transform();
 			RigidBody rigidBody = entity.getRigidBody();
 			rigidBody.getMotionState().getWorldTransform(nextTransform);

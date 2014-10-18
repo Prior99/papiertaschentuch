@@ -23,6 +23,8 @@ public class Graphics extends Thread {
 	private boolean exit;
 	private Player player;
 	private Shader defaultShader;
+	private int framesSinceLastCall;
+	private long lastCall;
 
 	public Graphics(int width, int height, Entities entities, Player player) {
 		super("Graphicsthread");
@@ -34,6 +36,17 @@ public class Graphics extends Thread {
 		readyListeners = new ArrayList<>();
 		graphicsTickListeners = new ArrayList<>();
 		shutdownListeners = new ArrayList<>();
+		framesSinceLastCall = 0;
+		lastCall = System.currentTimeMillis();
+	}
+	
+	public float retrieveFPSSinceLastCall() {
+		long now = System.currentTimeMillis();
+		long elapsed = now - lastCall;
+		float fps = framesSinceLastCall / (elapsed / 1000f);
+		framesSinceLastCall = 0;
+		lastCall = now;
+		return fps;
 	}
 
 	public void setPlayer(Player player) {
@@ -111,6 +124,7 @@ public class Graphics extends Thread {
 		entities.forEach((e) -> {
 			drawEntity(e);
 		});
+		framesSinceLastCall++;
 		Display.update();
 	}
 	
@@ -125,9 +139,9 @@ public class Graphics extends Thread {
 			glRotatef(Graphics.radiantToDegree(rotation.x), 1.f, 0.f, 0.f);
 			glRotatef(Graphics.radiantToDegree(rotation.y), 0.f, 1.f, 0.f);
 			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
+			defaultShader.setUniform("uSampler", 0);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
-			defaultShader.setUniform("uSampler", GL_TEXTURE0);
 			drawModel(e.getModel());
 			glPopMatrix();
 		}

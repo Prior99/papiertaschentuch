@@ -1,8 +1,7 @@
 package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.linearmath.*;
-import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONCAVE;
-import static de.cronosx.papiertaschentuch.Entity.CollisionType.CONVEX;
+import static de.cronosx.papiertaschentuch.Entity.CollisionType.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.atomic.*;
@@ -20,6 +19,10 @@ public class Papiertaschentuch {
 
 	public Game getGame() {
 		return game;
+	}
+	
+	public Graphics getGraphics() {
+		return graphics;
 	}
 	
 	public static Config getConfig() {
@@ -55,6 +58,26 @@ public class Papiertaschentuch {
 			});
 		}
 		game = new Game(entities);
+		if(getConfig().getBool("Log FPS", false)) {
+			AtomicInteger i = new AtomicInteger(0);
+			final int tickAmount = getConfig().getInt("FPS Tick Amount", 600);
+			game.onTick(() -> {
+				if(i.getAndIncrement() > tickAmount) {
+					Log.info("FPS in last " + tickAmount + " ticks: " + graphics.retrieveFPSSinceLastCall());
+					i.set(0);
+				}
+			});
+		}
+		if(getConfig().getBool("Log TPS", false)) {
+			AtomicInteger i = new AtomicInteger(0);
+			final int tickAmount = getConfig().getInt("TPS Tick Amount", 600);
+			game.onTick(() -> {
+				if(i.getAndIncrement() > tickAmount) {
+					Log.info("TPS in last " + tickAmount + " ticks: " + game.retrieveTPSSinceLastCall());
+					i.set(0);
+				}
+			});
+		}
 		graphics.onReady(() -> {
 			game.start();
 		});
@@ -108,11 +131,7 @@ public class Papiertaschentuch {
 		}
 		if (config != null) {
 			Papiertaschentuch p = new Papiertaschentuch();
-			
-			Entity cube2 = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
-			p.addEntity(cube2);
 			Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
-			room.setPosition(new Vector3f(0, 11.f, 0));
 			p.addEntity(room);
 			p.start();
 			Light l = Lights.createLight();
@@ -121,8 +140,8 @@ public class Papiertaschentuch {
 			final AtomicInteger i = new AtomicInteger(0);
 			p.getGame().onTick(() -> {
 				if(i.incrementAndGet() < 100) {
-					/*Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
-					p.addEntity(cube);*/
+					Entity cube = new Entity(Models.getModel("crate.obj"), Textures.getTexture("crate.png"), 50f, BOX, new Vector3f(.5f, .5f, .5f));
+					p.addEntity(cube);
 				}
 			});
 		} else {

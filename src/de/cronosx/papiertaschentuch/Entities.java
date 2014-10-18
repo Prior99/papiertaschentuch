@@ -31,6 +31,15 @@ public class Entities {
 			mutex.unlock();
 		}
 	}
+	
+	public void parallelForEach(Consumer<? super Entity> it) {
+		mutex.lock();
+		try {
+			entities.parallelStream().forEach(it);
+		} finally {
+			mutex.unlock();
+		}
+	}
 
 	public void add(Entity e) {
 		mutex.lock();
