@@ -98,13 +98,6 @@ public class Player {
 		}
 		setRotation(new Vector3f(nx, rotation.y + delta.y, rotation.z + delta.z));
 	}
-
-	public void transform() {
-		glRotatef(Graphics.radiantToDegree(getRotation().x), 1.f, 0.f, 0.f);
-		glRotatef(Graphics.radiantToDegree(getRotation().y), 0.f, 1.f, 0.f);
-		glRotatef(Graphics.radiantToDegree(getRotation().z), 0.f, 0.f, 1.f);
-		glTranslatef(-getPosition().x, -getPosition().y, -getPosition().z);
-	}
 	
 	public static class KinematicMotionState extends MotionState {
 		private final Transform transform;

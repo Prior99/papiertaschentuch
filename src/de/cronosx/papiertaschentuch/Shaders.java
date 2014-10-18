@@ -9,8 +9,11 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import javax.vecmath.*;
+import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
 import org.lwjgl.opengl.GL20;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -30,11 +33,13 @@ public class Shaders {
 	
 	public static class Shader {
 
-		private int id;
-		private Map<String, Integer> uniformLocations;
+		private final int id;
+		private final Map<String, Integer> uniformLocations;
+		private final Map<String, Integer> attributeLocations;
 
 		public Shader(String filename) {
 			uniformLocations = new HashMap<>();
+			attributeLocations = new HashMap<>();
 			id = glCreateProgram();
 			try {
 				int vertID = loadShader("shader/" + filename + ".vert", GL_VERTEX_SHADER);
@@ -59,12 +64,41 @@ public class Shaders {
 			}
 		}
 		
+		public void setAttribute(String name, int arrayID, int elemSize, int type) {
+			if(!attributeLocations.containsKey(name)) {
+				int address = enableAttribute(name);
+				attributeLocations.put(name, address);
+			}
+			glBindBuffer(GL_ARRAY_BUFFER, arrayID);
+			glVertexAttribPointer(attributeLocations.get(name), elemSize, type, false, 0, 0);
+		}
+		
+		private int enableAttribute(String name) {
+			int attribLocation = glGetAttribLocation(getID(), name);
+			glEnableVertexAttribArray(attribLocation);
+			return attribLocation;
+		}
+		
 		public void setUniform(String name, Vector3f param) {
 			if(!uniformLocations.containsKey(name))  {
 				int address = glGetUniformLocation(getID(), name);
 				uniformLocations.put(name, address);
 			}
 			glUniform3f(uniformLocations.get(name), param.x, param.y, param.z);
+		}
+		
+		public void setUniform(String name, Matrix4f param) {
+			if(!uniformLocations.containsKey(name))  {
+				int address = glGetUniformLocation(getID(), name);
+				uniformLocations.put(name, address);
+			}
+			FloatBuffer matrix = BufferUtils.createFloatBuffer(4 * 4);
+			matrix.put(param.m00); matrix.put(param.m01); matrix.put(param.m02); matrix.put(param.m03);
+			matrix.put(param.m10); matrix.put(param.m11); matrix.put(param.m12); matrix.put(param.m13);
+			matrix.put(param.m20); matrix.put(param.m21); matrix.put(param.m22); matrix.put(param.m23);
+			matrix.put(param.m30); matrix.put(param.m31); matrix.put(param.m32); matrix.put(param.m33);			
+			matrix.rewind();
+			glUniformMatrix4(uniformLocations.get(name), false, matrix);
 		}
 		
 		public void setUniform(String name, float param) {

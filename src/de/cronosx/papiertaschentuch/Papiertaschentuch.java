@@ -135,7 +135,7 @@ public class Papiertaschentuch {
 			p.addEntity(room);
 			p.start();
 			Light l = Lights.createLight();
-			l.setPosition(new Vector3f(0, 0, 0));
+			l.setPosition(new Vector3f(2f, 0, 0));
 			l.setColor(new Vector3f(1.f, 1.f, 1.f));
 			final AtomicInteger i = new AtomicInteger(0);
 			p.getGame().onTick(() -> {

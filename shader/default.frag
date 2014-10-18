@@ -1,7 +1,6 @@
 #define LIGHT_AMOUNT 8
 
 uniform sampler2D uSampler;
-uniform vec3 uPlayerPosition;
 
 varying vec2 vTextureCoord;
 varying vec3 vNormal;
@@ -9,7 +8,8 @@ varying vec3 vVertex;
 varying vec3[LIGHT_AMOUNT] vLightPositions;
 
 void main() {
-	vec3 direction = normalize(vec3(vLightPositions[0]) - vVertex);
+	gl_FragColor = texture2D(uSampler, vTextureCoord);
+	/*vec3 direction = normalize(vec3(vLightPositions[0]) - vVertex);
 	vec3 negativeVectorDirection = normalize(-vVertex);
 	vec3 reflection = normalize(-reflect(direction, vNormal));
 
@@ -21,5 +21,5 @@ void main() {
 	specularLight = clamp(specularLight, 0.0, 1.0);
 	vec3 lightColor = (diffuseLight + specularLight).rgb;
 	vec4 textureColor = texture2D(uSampler, vTextureCoord);
-	gl_FragColor = vec4(textureColor.rgb * lightColor, textureColor.a);
+	gl_FragColor = vec4(textureColor.rgb * lightColor, textureColor.a);*/
 }

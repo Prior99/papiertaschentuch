@@ -60,16 +60,25 @@ public abstract class Model {
 	public int getIndexCount() {
 		return indexCount;
 	}
-
-	public void loadBuffers() {
+	
+	public int getVertexBufferID() {
 		if(!bound) bind();
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, textureBufferID);
-		glTexCoordPointer(2, GL_FLOAT, 0, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
-		glNormalPointer(GL_FLOAT, 0, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, facesBufferID);
+		return vertexBufferID;
+	}
+	
+	public int getTextureBufferID() {
+		if(!bound) bind();
+		return textureBufferID;
+	}
+	
+	public int getNormalBufferID() {
+		if(!bound) bind();
+		return normalBufferID;
+	}
+	
+	public int getIndexBufferID() {
+		if(!bound) bind();
+		return facesBufferID;
 	}
 
 	protected abstract float[] getVertices();
