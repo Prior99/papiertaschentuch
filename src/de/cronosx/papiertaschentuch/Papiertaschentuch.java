@@ -108,16 +108,21 @@ public class Papiertaschentuch {
 		}
 		if (config != null) {
 			Papiertaschentuch p = new Papiertaschentuch();
+			
+			Entity cube2 = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
+			p.addEntity(cube2);
 			Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
+			room.setPosition(new Vector3f(0, 11.f, 0));
 			p.addEntity(room);
 			p.start();
 			Light l = Lights.createLight();
 			l.setPosition(new Vector3f(0, 0, 0));
+			l.setColor(new Vector3f(1.f, 1.f, 1.f));
 			final AtomicInteger i = new AtomicInteger(0);
 			p.getGame().onTick(() -> {
 				if(i.incrementAndGet() < 100) {
-					Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
-					p.addEntity(cube);
+					/*Entity cube = new Entity(Models.getModel("cube.obj"), Textures.getTexture("bricks.png"), 50f, CONVEX);
+					p.addEntity(cube);*/
 				}
 			});
 		} else {

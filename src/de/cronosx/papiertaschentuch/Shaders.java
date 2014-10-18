@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import javax.vecmath.*;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import org.lwjgl.opengl.GL20;
 import static org.lwjgl.opengl.GL20.*;
@@ -57,12 +59,12 @@ public class Shaders {
 			}
 		}
 		
-		public void setUniform(String name, Vector3f[] param) {
+		public void setUniform(String name, Vector3f param) {
 			if(!uniformLocations.containsKey(name))  {
 				int address = glGetUniformLocation(getID(), name);
 				uniformLocations.put(name, address);
 			}
-			//TODO
+			glUniform3f(uniformLocations.get(name), param.x, param.y, param.z);
 		}
 		
 		public void setUniform(String name, float param) {

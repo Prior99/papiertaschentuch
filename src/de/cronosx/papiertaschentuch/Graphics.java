@@ -100,10 +100,14 @@ public class Graphics extends Thread {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		player.transform();
+		Lights.forEach((l) -> {
+			l.bind();
+		});
 		graphicsTickListeners.stream().forEach((l) -> {
 			l.onGraphicsTick();
 		});
 		glUseProgram(defaultShader.getID());
+		defaultShader.setUniform("uPlayerPosition", player.getPosition());
 		entities.forEach((e) -> {
 			drawEntity(e);
 		});
@@ -123,6 +127,7 @@ public class Graphics extends Thread {
 			glRotatef(Graphics.radiantToDegree(rotation.z), 0.f, 0.f, 1.f);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
+			defaultShader.setUniform("uSampler", GL_TEXTURE0);
 			drawModel(e.getModel());
 			glPopMatrix();
 		}
