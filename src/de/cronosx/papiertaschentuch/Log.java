@@ -1,6 +1,7 @@
 package de.cronosx.papiertaschentuch;
 
 import static de.cronosx.papiertaschentuch.Log.Level.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -125,11 +126,11 @@ public class Log extends Thread {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTimeInMillis(getTime());
 			sb.append("(").append(calendar.get(Calendar.YEAR)).append("-")
-					.append(calendar.get(Calendar.MONTH)).append("-")
-					.append(calendar.get(Calendar.DAY_OF_MONTH)).append(" ")
-					.append(calendar.get(Calendar.HOUR)).append(":")
-					.append(calendar.get(Calendar.MINUTE)).append(":")
-					.append(calendar.get(Calendar.SECOND))
+					.append(String.format("%02d", calendar.get(Calendar.MONTH))).append("-")
+					.append(String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH))).append(" ")
+					.append(String.format("%02d", calendar.get(Calendar.HOUR))).append(":")
+					.append(String.format("%02d", calendar.get(Calendar.MINUTE))).append(":")
+					.append(String.format("%02d", calendar.get(Calendar.SECOND)))
 					.append(") [");
 			switch (getLevel()) {
 				case ERROR:
