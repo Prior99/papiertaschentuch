@@ -14,7 +14,7 @@ public class Textures {
 			return textures.get(fileName);
 		} else {
 			try {
-				Texture tex = new Texture(new File("textures/" + fileName));
+				Texture tex = new Texture(new File(fileName));
 				textures.put(fileName, tex);
 				return tex;
 			} catch (IOException e) {

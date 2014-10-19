@@ -15,7 +15,7 @@ public class Models {
 		if (models.containsKey(fileName)) {
 			return models.get(fileName);
 		} else {
-			Model model = new ModelOBJ(new File("models/" + fileName));
+			Model model = new ModelOBJ(new File(fileName));
 			model.init();
 			models.put(fileName, model);
 			return model;

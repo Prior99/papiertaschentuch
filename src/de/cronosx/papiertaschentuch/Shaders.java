@@ -42,8 +42,8 @@ public class Shaders {
 			attributeLocations = new HashMap<>();
 			id = glCreateProgram();
 			try {
-				int vertID = loadShader("shader/" + filename + ".vert", GL_VERTEX_SHADER);
-				int fragID = loadShader("shader/" + filename + ".frag", GL_FRAGMENT_SHADER);
+				int vertID = loadShader(filename + ".vert", GL_VERTEX_SHADER);
+				int fragID = loadShader(filename + ".frag", GL_FRAGMENT_SHADER);
 				glAttachShader(id, vertID);
 				glAttachShader(id, fragID);
 				glLinkProgram(id);

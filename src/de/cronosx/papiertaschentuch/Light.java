@@ -27,8 +27,8 @@ public class Light {
 	
 	private void setDebugEntity(Entity entity) {
 		this.debugEntity = entity;
-		entity.setModel(Models.getModel("lightsource.obj"));
-		entity.setTexture(Textures.getTexture("lightsource.png"));
+		entity.setModel(Models.getModel("models/lightsource.obj"));
+		entity.setTexture(Textures.getTexture("textures/lightsource.png"));
 		entity.deactivateLighting();
 	}
 	

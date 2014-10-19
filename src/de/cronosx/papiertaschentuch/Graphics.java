@@ -28,6 +28,7 @@ public class Graphics extends Thread {
 	private long lastCall;
 	private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
 	private Stack<Matrix4f> modelMatrixStack;
+	private GUI gui;
 	
 	public Graphics(int width, int height, Entities entities, Player player) {
 		super("Graphicsthread");
@@ -43,6 +44,7 @@ public class Graphics extends Thread {
 		lastCall = System.currentTimeMillis();
 		modelMatrixStack = new Stack<>();
 		setupMatrices();
+		gui = new GUI(width, height);
 	}
 	
 	private void push() {
@@ -108,7 +110,7 @@ public class Graphics extends Thread {
 	}
 	
 	private void setupShader() {
-		defaultShader = Shaders.getShader("default");
+		defaultShader = Shaders.getShader("shader/default");
 		glUseProgram(defaultShader.getID());
 		defaultShader.setUniform("uProjectionMatrix", projectionMatrix);
 	}
@@ -148,6 +150,7 @@ public class Graphics extends Thread {
 		});
 		drawEntities();
 		framesSinceLastCall++;
+		gui.draw();
 		Display.update();
 	}
 	
@@ -162,6 +165,10 @@ public class Graphics extends Thread {
 		entities.forEach((e) -> {
 			drawEntity(e);
 		});
+	}
+	
+	public GUI getGUI() {
+		return gui;
 	}
 	
 	private void drawEntity(Entity e) {

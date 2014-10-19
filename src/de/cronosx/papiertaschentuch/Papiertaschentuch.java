@@ -102,8 +102,8 @@ public class Papiertaschentuch {
 		if (!exited) {
 			exited = true;
 			Log.debug("Shutting down.");
-			graphics.shutdown();
-			game.shutdown();
+			if(graphics != null) graphics.shutdown();
+			if(game != null) game.shutdown();
 			Log.debug("Good bye!");
 			Log.shutdown();
 		}
@@ -135,16 +135,20 @@ public class Papiertaschentuch {
 		}
 		if (config != null) {
 			instance = new Papiertaschentuch();
-			PhysicalEntity room = new PhysicalEntity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
+			PhysicalEntity room = new PhysicalEntity(Models.getModel("models/cube_world.obj"), Textures.getTexture("textures/groundrocks.png"), 0, CONCAVE);
 			instance.addEntity(room);
 			instance.start();
+			instance.getGraphics().getGUI().addText("Hello, world!\nLutsch meinen Schwanz  ", 0, 0);
 			Light l = Lights.createLight();
-			l.setPosition(new Vector3f(0, -10, 0));
+			l.setPosition(new Vector3f(5, -5, 0));
 			l.setColor(new Vector3f(1.f, 1.f, 1.f));
+			l = Lights.createLight();
+			l.setPosition(new Vector3f(-5, -5, 0));
+			l.setColor(new Vector3f(.5f, .5f, 1.f));
 			final AtomicInteger i = new AtomicInteger(0);
 			instance.getGame().onTick(() -> {
 				if(i.incrementAndGet() < 100) {
-					PhysicalEntity cube = new PhysicalEntity(Models.getModel("crate.obj"), Textures.getTexture("crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
+					PhysicalEntity cube = new PhysicalEntity(Models.getModel("models/crate.obj"), Textures.getTexture("textures/crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
 					instance.addEntity(cube);
 				}
 			});
