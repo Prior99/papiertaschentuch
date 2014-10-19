@@ -37,8 +37,11 @@ public class Physics {
 	}
 
 	public void addEntity(Entity e) {
-		RigidBody body = e.getRigidBody();
-		dynamicsWorld.addRigidBody(body);
+		if(e instanceof PhysicalEntity) {
+			PhysicalEntity pe = (PhysicalEntity) e;
+			RigidBody body = pe.getRigidBody();
+			dynamicsWorld.addRigidBody(body);
+		}
 	}
 	
 	public void setDebugDrawer(DebugDrawer dDraw) {
@@ -53,12 +56,15 @@ public class Physics {
 		player.tick();
 		dynamicsWorld.stepSimulation(1/60f, 1, 1/60f);
 		entities.parallelForEach((entity) -> {
-			Transform nextTransform = new Transform();
-			RigidBody rigidBody = entity.getRigidBody();
-			rigidBody.getMotionState().getWorldTransform(nextTransform);
-			Quat4f quat = new Quat4f();
-			nextTransform.getRotation(quat);
-			entity.updatePhysicsTransform(nextTransform.origin, quadRotationToEulerAngles(quat));
+			if(entity instanceof PhysicalEntity) {
+				PhysicalEntity pe = (PhysicalEntity) entity;
+				Transform nextTransform = new Transform();
+				RigidBody rigidBody = pe.getRigidBody();
+				rigidBody.getMotionState().getWorldTransform(nextTransform);
+				Quat4f quat = new Quat4f();
+				nextTransform.getRotation(quat);
+				pe.updatePhysicsTransform(nextTransform.origin, quadRotationToEulerAngles(quat));
+			}
 		});
 	}
 

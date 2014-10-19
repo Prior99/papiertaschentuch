@@ -1,21 +1,18 @@
 package de.cronosx.papiertaschentuch;
 
 import de.cronosx.papiertaschentuch.Shaders.Shader;
-import java.util.*;
 import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
+import java.util.*;
 import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import org.lwjgl.opengl.GL15;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class Graphics extends Thread {
 
@@ -176,11 +173,17 @@ public class Graphics extends Thread {
 			modelMatrix.setIdentity();
 			push();
 			modelMatrix.translate(position);
-			modelMatrix.rotate(rotation.x, new Vector3f(1.f, 0.f, 0.f));
+			/*modelMatrix.rotate(rotation.x, new Vector3f(1.f, 0.f, 0.f));
 			modelMatrix.rotate(rotation.y, new Vector3f(0.f, 1.f, 0.f));
-			modelMatrix.rotate(rotation.z, new Vector3f(0.f, 0.f, 1.f));
+			modelMatrix.rotate(rotation.z, new Vector3f(0.f, 0.f, 1.f));*/
+			Matrix4f normalMatrix = new Matrix4f();
+			normalMatrix.load(modelMatrix);
+			normalMatrix.invert();
+			normalMatrix.transpose();
+			defaultShader.setUniform("uDeactivateLighting", e.isLightingDeactivated());
 			defaultShader.setUniform("uSampler", 0);
 			defaultShader.setUniform("uModelMatrix", modelMatrix);
+			defaultShader.setUniform("uNormalMatrix", normalMatrix);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture.retrieveTextureID());
 			drawModel(e.getModel());

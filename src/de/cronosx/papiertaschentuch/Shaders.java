@@ -87,6 +87,14 @@ public class Shaders {
 			glUniform3f(uniformLocations.get(name), param.x, param.y, param.z);
 		}
 		
+		public void setUniform(String name, Vector4f param) {
+			if(!uniformLocations.containsKey(name))  {
+				int address = glGetUniformLocation(getID(), name);
+				uniformLocations.put(name, address);
+			}
+			glUniform4f(uniformLocations.get(name), param.x, param.y, param.z, param.w);
+		}
+		
 		public void setUniform(String name, Matrix4f param) {
 			if(!uniformLocations.containsKey(name))  {
 				int address = glGetUniformLocation(getID(), name);
@@ -115,6 +123,14 @@ public class Shaders {
 				uniformLocations.put(name, address);
 			}
 			glUniform1i(uniformLocations.get(name), param);
+		}
+
+		public void setUniform(String name, boolean param) {
+			if(!uniformLocations.containsKey(name)) {
+				int address = glGetUniformLocation(getID(), name);
+				uniformLocations.put(name, address);
+			}
+			glUniform1i(uniformLocations.get(name), param ? 1 : 0);
 		}
 
 		public int getID() {

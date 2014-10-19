@@ -11,12 +11,25 @@ public class Light {
 	private Vector3f color;
 	private final int id;
 	private boolean changed;
+	private Entity debugEntity;
 
 	public Light(int id) {
 		this.id = id;
 		this.color = new Vector3f(1.f, 1.f, 1.f);
 		this.position = new Vector3f(0, 0, 0);
 		changed = true;
+		if(Papiertaschentuch.getConfig().getBool("Debug Lights", false)) {
+			Entity e = new Entity();
+			setDebugEntity(e);
+			Papiertaschentuch.getInstance().addEntity(e);
+		}
+	}
+	
+	private void setDebugEntity(Entity entity) {
+		this.debugEntity = entity;
+		entity.setModel(Models.getModel("lightsource.obj"));
+		entity.setTexture(Textures.getTexture("lightsource.png"));
+		entity.deactivateLighting();
 	}
 	
 	public Vector3f getColor() {
@@ -31,6 +44,9 @@ public class Light {
 	public void setPosition(Vector3f position) {
 		this.position = position;
 		changed = true;
+		if(debugEntity != null) {
+			debugEntity.setPosition(position);
+		}
 	}
 	
 	public void bind() {

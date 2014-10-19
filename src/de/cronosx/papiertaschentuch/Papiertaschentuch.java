@@ -1,14 +1,14 @@
 package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.linearmath.*;
-import static de.cronosx.papiertaschentuch.Entity.CollisionType.*;
+import static de.cronosx.papiertaschentuch.PhysicalEntity.CollisionType.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.atomic.*;
 import javax.vecmath.Vector3f;
 
 public class Papiertaschentuch {
-
+	private static Papiertaschentuch instance;
 	public static Config config;
 	private final Game game;
 	private final Graphics graphics;
@@ -16,6 +16,10 @@ public class Papiertaschentuch {
 	private final Player player;
 	private final Entities entities;
 	private boolean exited;
+	
+	public static Papiertaschentuch getInstance() {
+		return instance;
+	}
 
 	public Game getGame() {
 		return game;
@@ -130,18 +134,18 @@ public class Papiertaschentuch {
 			Log.warn("Unable to read configfile. An IOException occured: " + e.getMessage());
 		}
 		if (config != null) {
-			Papiertaschentuch p = new Papiertaschentuch();
-			Entity room = new Entity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
-			p.addEntity(room);
-			p.start();
+			instance = new Papiertaschentuch();
+			PhysicalEntity room = new PhysicalEntity(Models.getModel("cube_world.obj"), Textures.getTexture("groundrocks.png"), 0, CONCAVE);
+			instance.addEntity(room);
+			instance.start();
 			Light l = Lights.createLight();
-			l.setPosition(new Vector3f(2f, 0, 0));
+			l.setPosition(new Vector3f(0, -10, 0));
 			l.setColor(new Vector3f(1.f, 1.f, 1.f));
 			final AtomicInteger i = new AtomicInteger(0);
-			p.getGame().onTick(() -> {
+			instance.getGame().onTick(() -> {
 				if(i.incrementAndGet() < 100) {
-					Entity cube = new Entity(Models.getModel("crate.obj"), Textures.getTexture("crate.png"), 50f, BOX, new Vector3f(.5f, .5f, .5f));
-					p.addEntity(cube);
+					PhysicalEntity cube = new PhysicalEntity(Models.getModel("crate.obj"), Textures.getTexture("crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
+					instance.addEntity(cube);
 				}
 			});
 		} else {
