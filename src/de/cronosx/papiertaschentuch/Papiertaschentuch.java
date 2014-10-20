@@ -128,9 +128,11 @@ public class Papiertaschentuch {
 		try {
 			config = new Config("engine.cfg");
 			config.parse();
-		} catch (FileNotFoundException e) {
+		} 
+		catch (FileNotFoundException e) {
 			Log.warn("Unable to open configfile: " + e.getMessage());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			Log.warn("Unable to read configfile. An IOException occured: " + e.getMessage());
 		}
 		if (config != null) {
@@ -138,7 +140,7 @@ public class Papiertaschentuch {
 			PhysicalEntity room = new PhysicalEntity(Models.getModel("models/cube_world.obj"), Textures.getTexture("textures/groundrocks.png"), 0, CONCAVE);
 			instance.addEntity(room);
 			instance.start();
-			instance.getGraphics().getGUI().addText("Hello, world!\nLutsch meinen Schwanz  ", 0, 0);
+			instance.getGraphics().getGUI().addText("Hello, world!", 10, 30);
 			Light l = Lights.createLight();
 			l.setPosition(new Vector3f(5, -5, 0));
 			l.setColor(new Vector3f(1.f, 1.f, 1.f));

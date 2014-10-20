@@ -3,29 +3,17 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import de.cronosx.papiertaschentuch.Shaders.Shader;
 import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.*;
 import javax.vecmath.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class GUI {
-	private static final float fontSize = .06f;
+	private float pixelWidth, pixelHeight;
 	private int width, height;
-	private float aspectRatio;
 	private Model letter;
 	private List<Text> texts;
 	private Shader letterShader;
@@ -36,11 +24,12 @@ public class GUI {
 	public GUI(int width, int height) {
 		this.width = width;
 		this.height = height;
-		aspectRatio = width / (float) height;
-		setupLetterModel();
 		texts = new ArrayList<>();
 		defaultFontMap = new FontMap("fonts/default.map");
 		translationMatrix = new Matrix4f();
+		pixelWidth = 2.f / width;
+		pixelHeight = 2.f / height;
+		setupLetterModel();
 	}
 	
 	public void addText(String text, int x, int y) {
@@ -60,7 +49,7 @@ public class GUI {
 		for(int i = 0; i < text.getText().length(); i++) {
 			char c = text.getText().charAt(i);
 			translationMatrix.setIdentity();
-			translationMatrix.translate(new Vector2f((fontSize / 5) * 3 * col, 1.f -(fontSize / 5) * 9 * row));
+			translationMatrix.translate(new Vector2f(text.getX() * pixelWidth - 1.f + 9 * pixelWidth * col, 1.f - 16 * pixelHeight * row - text.getY() * pixelHeight));
 			if(c == '\n') {
 				col = 0;
 				row++;
@@ -189,10 +178,10 @@ public class GUI {
 		@Override
 		protected void load() {
 			vertices = new float[] {
-				0,        fontSize * aspectRatio, 0,
-				fontSize / 2, fontSize * aspectRatio, 0,
-				0,        0,                  0,
-				fontSize / 2, 0,                  0
+				0, 0, 0,
+				8 * pixelWidth,  0, 0,
+				0, -16 * pixelHeight, 0,
+				8 * pixelWidth, -16 * pixelHeight, 0,
 			};
 			normals = new float[] {
 				0, 0, -1,
