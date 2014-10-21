@@ -11,7 +11,7 @@ public class Input {
 	private static boolean closed = false;
 
 	private static Player player;
-	private static boolean started;
+	private static boolean started = false;
 	
 	public static void start() {
 		Mouse.setClipMouseCoordinatesToWindow(true);

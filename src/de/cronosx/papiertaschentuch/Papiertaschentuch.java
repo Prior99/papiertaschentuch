@@ -1,6 +1,7 @@
 package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.linearmath.*;
+import de.cronosx.papiertaschentuch.EventEmitter.Listener;
 import static de.cronosx.papiertaschentuch.PhysicalEntity.CollisionType.*;
 import de.cronosx.papiertaschentuch.vecmath.Vector2i;
 import java.io.FileNotFoundException;
@@ -23,8 +24,7 @@ public class Papiertaschentuch {
 	private final Player player;
 	private final Entities entities;
 	private boolean exited;
-	private List<ReadyListener> readyListeners;
-	private boolean gameReady, graphicsReady;
+	private EventEmitter emitter;
 	
 	public static Papiertaschentuch getInstance() {
 		return instance;
@@ -43,17 +43,13 @@ public class Papiertaschentuch {
 	}
 	
 	private void checkReady() {
-		if(gameReady && graphicsReady) {
-			readyListeners.stream().forEach((l) -> {
-				l.onReady();
-			});
+		if(game.isReady() && graphics.isReady()) {
+			emitter.emit("ready");
 		}
 	}
 
 	public Papiertaschentuch() {
-		gameReady = false;
-		graphicsReady = false;
-		readyListeners = new ArrayList<>();
+		emitter = new EventEmitter();
 		Log.onError((msg) -> {
 			if (getConfig().getBool("Exit on errors", true)) {
 				Log.debug("An error occured. Shutting down.");
@@ -75,7 +71,7 @@ public class Papiertaschentuch {
 			DebugDrawer dDraw = new DebugDrawer();
 			physics.setDebugDrawer(dDraw);
 			dDraw.setDebugMode(DebugDrawModes.MAX_DEBUG_DRAW_MODE | DebugDrawModes.DRAW_AABB);
-			graphics.onGraphicsTick(() -> {
+			graphics.on("tick", () -> {
 				dDraw.begin();
 				physics.debugDraw();
 				dDraw.end();
@@ -85,7 +81,7 @@ public class Papiertaschentuch {
 		if(getConfig().getBool("Log FPS", false)) {
 			AtomicInteger i = new AtomicInteger(0);
 			final int tickAmount = getConfig().getInt("FPS Tick Amount", 600);
-			game.onTick(() -> {
+			game.on("tick", () -> {
 				if(i.getAndIncrement() > tickAmount) {
 					Log.info("FPS in last " + tickAmount + " ticks: " + graphics.retrieveFPSSinceLastCall());
 					i.set(0);
@@ -95,39 +91,37 @@ public class Papiertaschentuch {
 		if(getConfig().getBool("Log TPS", false)) {
 			AtomicInteger i = new AtomicInteger(0);
 			final int tickAmount = getConfig().getInt("TPS Tick Amount", 600);
-			game.onTick(() -> {
+			game.on("tick", () -> {
 				if(i.getAndIncrement() > tickAmount) {
 					Log.info("TPS in last " + tickAmount + " ticks: " + game.retrieveTPSSinceLastCall());
 					i.set(0);
 				}
 			});
 		}
-		graphics.onReady(() -> {
-			graphicsReady = true;
+		graphics.on("ready", () -> {
 			checkReady();
 		});
-		game.onReady(() -> {
-			gameReady = true;
+		game.on("ready", () -> {
 			checkReady();
 		});
-		game.onTick(() -> {
+		game.on("tick", () -> {
 			physics.tick();
 		});
-		game.onShutdown(() -> {
+		game.on("shutdown", () -> {
 			shutdown();
 		});
-		graphics.onShutdown(() -> {
+		graphics.on("shutdown", () -> {
 			shutdown();
 		});
-		this.onReady(() -> {
+		this.on("ready", () -> {
 			Input.start();
 		});
 		activatePlayer(player);
 		Log.debug("Papiertaschentuch initialized.");
 	}
 	
-	public void onReady(ReadyListener l) {
-		this.readyListeners.add(l);
+	public void on(String s, Listener l) {
+		emitter.on(s, l);
 	}
 
 	private void shutdown() {
@@ -155,11 +149,6 @@ public class Papiertaschentuch {
 		graphics.start();
 		game.start();
 	}
-	
-	public interface ReadyListener {
-		public void onReady();
-	}
-
 	public static void main(String[] args) {
 		config = null;
 		try {
@@ -187,7 +176,7 @@ public class Papiertaschentuch {
 		Lights.createLight(new Vector3f(5, -5, 0), new Vector3f(1.f, .9f, .8f));
 		Text.createText("Hello, World!", new Vector2i(10, 10));
 		final AtomicInteger i = new AtomicInteger(0);
-		getInstance().getGame().onTick(() -> {
+		getInstance().getGame().on("tick", () -> {
 			if(i.incrementAndGet() < 100) {
 				Entities.createPhysicalEntity(Models.getModel("models/crate.obj"), Textures.getTexture("textures/crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
 			}

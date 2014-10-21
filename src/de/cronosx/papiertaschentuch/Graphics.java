@@ -1,5 +1,6 @@
 package de.cronosx.papiertaschentuch;
 
+import de.cronosx.papiertaschentuch.EventEmitter.Listener;
 import de.cronosx.papiertaschentuch.Shaders.Shader;
 import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
 import java.util.*;
@@ -18,9 +19,7 @@ public class Graphics extends Thread {
 
 	private final int screenWidth, screenHeight;
 	private final Entities entities;
-	private final List<ReadyListener> readyListeners;
-	private final List<GraphicsTickListener> graphicsTickListeners;
-	private final List<ShutdownListener> shutdownListeners;
+	private EventEmitter emitter;
 	private boolean exit;
 	private Player player;
 	private Shader defaultShader;
@@ -29,6 +28,7 @@ public class Graphics extends Thread {
 	private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
 	private Stack<Matrix4f> modelMatrixStack;
 	private GUI gui;
+	private boolean ready;
 	
 	public Graphics(int width, int height, Entities entities, Player player) {
 		super("Graphicsthread");
@@ -37,14 +37,17 @@ public class Graphics extends Thread {
 		this.screenWidth = width;
 		this.screenHeight = height;
 		this.entities = entities;
-		readyListeners = new ArrayList<>();
-		graphicsTickListeners = new ArrayList<>();
-		shutdownListeners = new ArrayList<>();
+		emitter = new EventEmitter();
 		framesSinceLastCall = 0;
 		lastCall = System.currentTimeMillis();
 		modelMatrixStack = new Stack<>();
 		setupMatrices();
 		gui = new GUI(width, height);
+		ready = false;
+	}
+	
+	public boolean isReady() {
+		return ready;
 	}
 	
 	private void push() {
@@ -85,19 +88,6 @@ public class Graphics extends Thread {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-
-	public void onReady(ReadyListener listener) {
-		this.readyListeners.add(listener);
-	}
-
-	public void onGraphicsTick(GraphicsTickListener listener) {
-		this.graphicsTickListeners.add(listener);
-	}
-
-	public void onShutdown(ShutdownListener listener) {
-		this.shutdownListeners.add(listener);
-	}
-
 	private void setup() {
 		try {
 			setupDisplay();
@@ -137,9 +127,7 @@ public class Graphics extends Thread {
 		Lights.forEach((l) -> {
 			l.bind();
 		});
-		graphicsTickListeners.stream().forEach((l) -> {
-			l.onGraphicsTick();
-		});
+		emitter.emit("tick");
 		drawEntities();
 		framesSinceLastCall++;
 		gui.draw();
@@ -201,9 +189,8 @@ public class Graphics extends Thread {
 	@Override
 	public void run() {
 		setup();
-		readyListeners.stream().forEach((l) -> {
-			l.onReady();
-		});
+		ready = true;
+		emitter.emit("ready");
 		while (!Input.isClosed() && !exit) {
 			try {
 				render();
@@ -215,28 +202,15 @@ public class Graphics extends Thread {
 			}
 		}
 		Display.destroy();
-		shutdownListeners.stream().forEach((l) -> {
-			l.onShutdown();
-		});
+		emitter.emit("shutdown");
 	}
 
 	public void shutdown() {
 		exit = true;
 	}
-
-	public interface ReadyListener {
-
-		public void onReady();
-	}
-
-	public interface ShutdownListener {
-
-		public void onShutdown();
-	}
-
-	public interface GraphicsTickListener {
-
-		public void onGraphicsTick();
+	
+	public void on(String s, Listener l) {
+		emitter.on(s, l);
 	}
 
 	public static float degreeToRadiant(float degree) {
