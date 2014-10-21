@@ -1,23 +1,39 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.cronosx.papiertaschentuch;
 
 import java.util.*;
 import java.util.concurrent.locks.*;
 import java.util.function.*;
+import javax.vecmath.Vector3f;
 
-/**
- *
- * @author prior
- */
 public class Entities {
 
-	private List<Entity> entities;
-	private ReentrantLock mutex;
+	private final List<Entity> entities;
+	private final ReentrantLock mutex;
 
+	public static Entity createEntity() {
+		Entity e = new Entity();
+		Papiertaschentuch.getInstance().addEntity(e);
+		return e;
+	}
+	
+	public static Entity createEntity(Model model, Texture texture) {
+		Entity e = new Entity(model, texture);
+		Papiertaschentuch.getInstance().addEntity(e);
+		return e;
+	}
+	
+	public static PhysicalEntity createPhysicalEntity(Model model, Texture texture, float mass, PhysicalEntity.CollisionType collisionType, Vector3f boxDim) {
+		PhysicalEntity pe = new PhysicalEntity(model, texture, mass, collisionType, boxDim);
+		Papiertaschentuch.getInstance().addEntity(pe);
+		return pe;
+	}
+	
+	public static PhysicalEntity createPhysicalEntity(Model model, Texture texture, float mass, PhysicalEntity.CollisionType collisionType) {
+		PhysicalEntity pe = new PhysicalEntity(model, texture, mass, collisionType);
+		Papiertaschentuch.getInstance().addEntity(pe);
+		return pe;	
+	}
+	
 	public Entities() {
 		mutex = new ReentrantLock();
 		entities = new ArrayList<>();

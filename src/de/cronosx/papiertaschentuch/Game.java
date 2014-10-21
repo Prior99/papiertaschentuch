@@ -1,15 +1,14 @@
 package de.cronosx.papiertaschentuch;
 
+import static de.cronosx.papiertaschentuch.Papiertaschentuch.*;
 import java.util.*;
 
 public class Game extends Thread {
-	private static final int ticksPerSecond = 60;
-	private static final int waitTime = 1000 / ticksPerSecond;
-	private static final int msThreshold = 3;
 	
 	private Entities entities;
 	private List<TickListener> tickListeners;
 	private List<ShutdownListener> shutdownListeners;
+	private List<ReadyListener> readyListeners;
 	private boolean exit;
 	private int ticksSinceLastCall;
 	private long lastCall;
@@ -18,6 +17,7 @@ public class Game extends Thread {
 		super("Gamethread");
 		tickListeners = new ArrayList<>();
 		shutdownListeners = new ArrayList<>();
+		readyListeners = new ArrayList<>();
 		this.entities = entities;
 		exit = false;
 		ticksSinceLastCall = 0;
@@ -35,6 +35,9 @@ public class Game extends Thread {
 	
 	@Override
 	public void run() {
+		readyListeners.stream().forEach((l) -> {
+			l.onReady();
+		});
 		while (!Input.isClosed() && !exit) {
 			long start = System.currentTimeMillis();
 			Input.tick();
@@ -75,18 +78,24 @@ public class Game extends Thread {
 	public void onTick(TickListener l) {
 		tickListeners.add(l);
 	}
+	
+	public void onReady(ReadyListener l) {
+		readyListeners.add(l);
+	}
 
 	public void onShutdown(ShutdownListener l) {
 		shutdownListeners.add(l);
 	}
 
 	public interface TickListener {
-
 		public void onTick();
+	}
+	
+	public interface ReadyListener {
+		public void onReady();
 	}
 
 	public interface ShutdownListener {
-
 		public void onShutdown();
 	}
 }

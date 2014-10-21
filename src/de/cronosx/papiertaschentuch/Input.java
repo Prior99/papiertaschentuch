@@ -11,13 +11,22 @@ public class Input {
 	private static boolean closed = false;
 
 	private static Player player;
+	private static boolean started;
+	
+	public static void start() {
+		Mouse.setClipMouseCoordinatesToWindow(true);
+		if(Papiertaschentuch.getConfig().getBool("Grab Mouse", true)) {
+			Mouse.setGrabbed(true);
+		}
+		started = true;
+	}
 
 	public static void setPlayerObject(Player player) {
 		Input.player = player;
 	}
 
 	public static void tick() {
-		if (Display.isActive() && player != null) {
+		if(player != null && started) {
 			Vector3f walkDirection = new Vector3f(0, 0, 0);
 			if (Keyboard.isKeyDown(Keyboard.KEY_W)) { //Move forward
 				walkDirection.add(new Vector3f(
@@ -46,9 +55,9 @@ public class Input {
 			int dx = Mouse.getDX(),
 					dy = Mouse.getDY();
 			player.rotate(new Vector3f(-dy * turnSpeedFactor, dx * turnSpeedFactor, 0f));
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-			closed = true;
+			if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+				closed = true;
+			}
 		}
 	}
 

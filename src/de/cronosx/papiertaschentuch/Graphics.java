@@ -101,7 +101,6 @@ public class Graphics extends Thread {
 	private void setup() {
 		try {
 			setupDisplay();
-			setupMouse();
 			setupGL();
 			setupShader();
 		} catch (LWJGLException e) {
@@ -113,13 +112,6 @@ public class Graphics extends Thread {
 		defaultShader = Shaders.getShader("shader/default");
 		glUseProgram(defaultShader.getID());
 		defaultShader.setUniform("uProjectionMatrix", projectionMatrix);
-	}
-
-	private void setupMouse() {
-		Mouse.setClipMouseCoordinatesToWindow(true);
-		if(Papiertaschentuch.getConfig().getBool("Grab Mouse", true)) {
-			Mouse.setGrabbed(true);
-		}
 	}
 
 	private void setupDisplay() throws LWJGLException {

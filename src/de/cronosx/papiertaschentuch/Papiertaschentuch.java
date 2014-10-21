@@ -2,12 +2,19 @@ package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.linearmath.*;
 import static de.cronosx.papiertaschentuch.PhysicalEntity.CollisionType.*;
+import de.cronosx.papiertaschentuch.vecmath.Vector2i;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.*;
 import javax.vecmath.Vector3f;
 
 public class Papiertaschentuch {
+	public static final int ticksPerSecond = 60;
+	public static final int waitTime = 1000 / ticksPerSecond;
+	public static final int msThreshold = 3;
+	
 	private static Papiertaschentuch instance;
 	public static Config config;
 	private final Game game;
@@ -16,6 +23,8 @@ public class Papiertaschentuch {
 	private final Player player;
 	private final Entities entities;
 	private boolean exited;
+	private List<ReadyListener> readyListeners;
+	private boolean gameReady, graphicsReady;
 	
 	public static Papiertaschentuch getInstance() {
 		return instance;
@@ -32,8 +41,19 @@ public class Papiertaschentuch {
 	public static Config getConfig() {
 		return config;
 	}
+	
+	private void checkReady() {
+		if(gameReady && graphicsReady) {
+			readyListeners.stream().forEach((l) -> {
+				l.onReady();
+			});
+		}
+	}
 
 	public Papiertaschentuch() {
+		gameReady = false;
+		graphicsReady = false;
+		readyListeners = new ArrayList<>();
 		Log.onError((msg) -> {
 			if (getConfig().getBool("Exit on errors", true)) {
 				Log.debug("An error occured. Shutting down.");
@@ -83,7 +103,12 @@ public class Papiertaschentuch {
 			});
 		}
 		graphics.onReady(() -> {
-			game.start();
+			graphicsReady = true;
+			checkReady();
+		});
+		game.onReady(() -> {
+			gameReady = true;
+			checkReady();
 		});
 		game.onTick(() -> {
 			physics.tick();
@@ -94,8 +119,15 @@ public class Papiertaschentuch {
 		graphics.onShutdown(() -> {
 			shutdown();
 		});
+		this.onReady(() -> {
+			Input.start();
+		});
 		activatePlayer(player);
 		Log.debug("Papiertaschentuch initialized.");
+	}
+	
+	public void onReady(ReadyListener l) {
+		this.readyListeners.add(l);
 	}
 
 	private void shutdown() {
@@ -121,6 +153,11 @@ public class Papiertaschentuch {
 
 	public void start() {
 		graphics.start();
+		game.start();
+	}
+	
+	public interface ReadyListener {
+		public void onReady();
 	}
 
 	public static void main(String[] args) {
@@ -135,27 +172,25 @@ public class Papiertaschentuch {
 		catch (IOException e) {
 			Log.warn("Unable to read configfile. An IOException occured: " + e.getMessage());
 		}
-		if (config != null) {
+		if(config != null) {
 			instance = new Papiertaschentuch();
-			PhysicalEntity room = new PhysicalEntity(Models.getModel("models/cube_world.obj"), Textures.getTexture("textures/groundrocks.png"), 0, CONCAVE);
-			instance.addEntity(room);
 			instance.start();
-			instance.getGraphics().getGUI().addText("Hello, world!", 10, 30);
-			Light l = Lights.createLight();
-			l.setPosition(new Vector3f(5, -5, 0));
-			l.setColor(new Vector3f(1.f, 1.f, 1.f));
-			l = Lights.createLight();
-			l.setPosition(new Vector3f(-5, -5, 0));
-			l.setColor(new Vector3f(.5f, .5f, 1.f));
-			final AtomicInteger i = new AtomicInteger(0);
-			instance.getGame().onTick(() -> {
-				if(i.incrementAndGet() < 100) {
-					PhysicalEntity cube = new PhysicalEntity(Models.getModel("models/crate.obj"), Textures.getTexture("textures/crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
-					instance.addEntity(cube);
-				}
-			});
-		} else {
+			testgame();
+		} 
+		else {
 			Log.fatal("Unable to parse config. Aborting.");
 		}
+	}
+	
+	public static void testgame() {
+		Entities.createPhysicalEntity(Models.getModel("models/cube_world.obj"), Textures.getTexture("textures/groundrocks.png"), 0, CONCAVE);
+		Lights.createLight(new Vector3f(5, -5, 0), new Vector3f(1.f, .9f, .8f));
+		Text.createText("Hello, World!", new Vector2i(10, 10));
+		final AtomicInteger i = new AtomicInteger(0);
+		getInstance().getGame().onTick(() -> {
+			if(i.incrementAndGet() < 100) {
+				Entities.createPhysicalEntity(Models.getModel("models/crate.obj"), Textures.getTexture("textures/crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
+			}
+		});
 	}
 }

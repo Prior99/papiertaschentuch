@@ -1,6 +1,7 @@
 package de.cronosx.papiertaschentuch;
 
 import java.util.function.*;
+import javax.vecmath.Vector3f;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
 
@@ -8,6 +9,17 @@ public class Lights {
 
 	private static Light[] lights = new Light[8];
 
+	public static Light createLight(Vector3f position) {
+		return createLight()
+			.setPosition(position);
+	}
+	
+	public static Light createLight(Vector3f position, Vector3f color) {
+		return createLight()
+			.setPosition(position)
+			.setColor(color);
+	}
+	
 	public static Light createLight() {
 		for (int i = 0; i < lights.length; i++) {
 			if (lights[i] == null) {

@@ -2,7 +2,7 @@ package de.cronosx.papiertaschentuch;
 
 import com.bulletphysics.collision.shapes.CollisionShape;
 import de.cronosx.papiertaschentuch.Shaders.Shader;
-import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
+import de.cronosx.papiertaschentuch.vecmath.*;
 import java.io.*;
 import java.util.*;
 import javax.vecmath.Vector2f;
@@ -32,8 +32,12 @@ public class GUI {
 		setupLetterModel();
 	}
 	
-	public void addText(String text, int x, int y) {
-		texts.add(new Text(text, x, y));
+	public void addText(Text text) {
+		texts.add(text);
+	}
+	
+	public void removeText(Text text) {
+		texts.remove(text);
 	}
 	
 	private void drawText(Text text) {
@@ -46,10 +50,12 @@ public class GUI {
 		glBindTexture(GL_TEXTURE_2D, defaultFont.retrieveTextureID());
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, letter.getIndexBufferID());
 		int col = 0, row = 0;
+		Vector2i position = text.getPosition();
 		for(int i = 0; i < text.getText().length(); i++) {
 			char c = text.getText().charAt(i);
 			translationMatrix.setIdentity();
-			translationMatrix.translate(new Vector2f(text.getX() * pixelWidth - 1.f + 9 * pixelWidth * col, 1.f - 16 * pixelHeight * row - text.getY() * pixelHeight));
+			translationMatrix.translate(new Vector2f(position.x * pixelWidth - 1.f + 9 * pixelWidth * col, 
+					1.f - 16 * pixelHeight * row - position.y * pixelHeight));
 			if(c == '\n') {
 				col = 0;
 				row++;
@@ -89,32 +95,6 @@ public class GUI {
 	private void setupLetterModel() {
 		letter = new ModelLetter();
 		letter.init();
-	}
-	
-	public static class Text {
-		private String text;
-		private int x, y;
-		public Text(String text, int x, int y) {
-			this.text = text;
-			this.x = x;
-			this.y = y;
-		}
-		
-		public int getX() {
-			return x;
-		}
-		
-		public int getY() {
-			return y;
-		}
-		
-		public String getText() {
-			return text;
-		}
-		
-		public void setText(String text) {
-			this.text = text;
-		}
 	}
 	
 	private class FontMap {
