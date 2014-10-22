@@ -1,27 +1,30 @@
 package de.cronosx.papiertaschentuch;
 
+import de.cronosx.papiertaschentuch.EventEmitter.Listener;
+import static de.cronosx.papiertaschentuch.Papiertaschentuch.*;
 import java.util.*;
 
 public class Game extends Thread {
-	private static final int ticksPerSecond = 60;
-	private static final int waitTime = 1000 / ticksPerSecond;
-	private static final int msThreshold = 3;
 	
 	private Entities entities;
-	private List<TickListener> tickListeners;
-	private List<ShutdownListener> shutdownListeners;
 	private boolean exit;
 	private int ticksSinceLastCall;
 	private long lastCall;
-
+	private EventEmitter emitter;
+	private boolean ready;
+	
 	public Game(Entities entities) {
 		super("Gamethread");
-		tickListeners = new ArrayList<>();
-		shutdownListeners = new ArrayList<>();
+		emitter = new EventEmitter();
 		this.entities = entities;
 		exit = false;
 		ticksSinceLastCall = 0;
 		lastCall = System.currentTimeMillis();
+		ready = false;
+	}
+	
+	public void on(String string, Listener l) {
+		emitter.on(string, l);
 	}
 
 	public float retrieveTPSSinceLastCall() {
@@ -33,16 +36,20 @@ public class Game extends Thread {
 		return tps;
 	}
 	
+	public boolean isReady() {
+		return ready;
+	}
+	
 	@Override
 	public void run() {
+		ready = true;
+		emitter.emit("ready");
 		while (!Input.isClosed() && !exit) {
 			long start = System.currentTimeMillis();
 			Input.tick();
 			ticksSinceLastCall++;
 			try {
-				tickListeners.stream().forEach((l) -> {
-					l.onTick();
-				});
+				emitter.emit("tick");
 			} 
 			catch (Exception e) {
 				System.out.println("Error in gameloop, shutting down: " + e.getMessage());
@@ -63,30 +70,10 @@ public class Game extends Thread {
 				Log.warn("Could not keep tickrate up. " + (elapsed - waitTime) + "ms (That's more than " + msThreshold + " ms) behind!");
 			}
 		}
-		shutdownListeners.stream().forEach((l) -> {
-			l.onShutdown();
-		});
+		emitter.emit("shutdown");
 	}
 
 	public void shutdown() {
 		exit = true;
-	}
-
-	public void onTick(TickListener l) {
-		tickListeners.add(l);
-	}
-
-	public void onShutdown(ShutdownListener l) {
-		shutdownListeners.add(l);
-	}
-
-	public interface TickListener {
-
-		public void onTick();
-	}
-
-	public interface ShutdownListener {
-
-		public void onShutdown();
 	}
 }

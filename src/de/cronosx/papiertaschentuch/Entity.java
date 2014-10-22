@@ -19,12 +19,14 @@ public class Entity {
 		return lightingDeactivated;
 	}
 	
-	public void activateLighting() {
+	public Entity activateLighting() {
 		lightingDeactivated = false;
+		return this;
 	}
 	
-	public void deactivateLighting() {
+	public Entity deactivateLighting() {
 		lightingDeactivated = true;
+		return this;
 	}
 
 	public Entity(Model model, Texture texture) {
@@ -41,28 +43,34 @@ public class Entity {
 		return position;
 	}
 
-	public void setModel(Model model) {
+	public Entity setModel(Model model) {
 		this.model = model;
+		return this;
 	}
 
-	public void setTexture(Texture texture) {
+	public Entity setTexture(Texture texture) {
 		this.texture = texture;
+		return this;
 	}
 
-	public void setPosition(Vector3f position) {
+	public Entity setPosition(Vector3f position) {
 		this.position = position;
+		return this;
 	}
 
-	public void move(Vector3f delta) {
+	public Entity move(Vector3f delta) {
 		setPosition(new Vector3f(position.x + delta.x, position.y + delta.y, position.z + delta.z));
+		return this;
 	}
 
-	public void setRotation(Vector3f rotation) {
+	public Entity setRotation(Vector3f rotation) {
 		this.rotation = rotation;
+		return this;
 	}
 
-	public void rotate(Vector3f delta) {
+	public Entity rotate(Vector3f delta) {
 		setRotation(new Vector3f(rotation.x + delta.x, rotation.y + delta.y, rotation.z + delta.z));
+		return this;
 	}
 	
 	public Model getModel() {

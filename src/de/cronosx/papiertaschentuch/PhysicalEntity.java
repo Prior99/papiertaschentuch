@@ -86,16 +86,17 @@ public class PhysicalEntity extends Entity {
 	}
 
 	@Override
-	public void setPosition(Vector3f position) {
+	public PhysicalEntity setPosition(Vector3f position) {
 		super.setPosition(position);
 		Transform tmp = new Transform();
 		rigidBody.getCenterOfMassTransform(tmp);
 		tmp.origin.set(position);
 		rigidBody.setCenterOfMassTransform(tmp);
+		return this;
 	}
 
 	@Override
-	public void setRotation(Vector3f rotation) {
+	public PhysicalEntity setRotation(Vector3f rotation) {
 		super.setRotation(rotation);
 		Transform tmp = new Transform();
 		rigidBody.getCenterOfMassTransform(tmp);
@@ -103,5 +104,6 @@ public class PhysicalEntity extends Entity {
 		QuaternionUtil.setEuler(quat, rotation.x, rotation.y, rotation.z);
 		tmp.setRotation(quat);
 		rigidBody.setCenterOfMassTransform(tmp);
+		return this;
 	}
 }

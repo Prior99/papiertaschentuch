@@ -19,9 +19,8 @@ public class Light {
 		this.position = new Vector3f(0, 0, 0);
 		changed = true;
 		if(Papiertaschentuch.getConfig().getBool("Debug Lights", false)) {
-			Entity e = new Entity();
+			Entity e = Entities.createEntity();
 			setDebugEntity(e);
-			Papiertaschentuch.getInstance().addEntity(e);
 		}
 	}
 	
@@ -36,17 +35,19 @@ public class Light {
 		return color;
 	}
 	
-	public void setColor(Vector3f v) {
+	public Light setColor(Vector3f v) {
 		this.color = v;
 		changed = true;
+		return this;
 	}
 
-	public void setPosition(Vector3f position) {
+	public Light setPosition(Vector3f position) {
 		this.position = position;
 		changed = true;
 		if(debugEntity != null) {
 			debugEntity.setPosition(position);
 		}
+		return this;
 	}
 	
 	public void bind() {
@@ -74,7 +75,8 @@ public class Light {
 		return position;
 	}
 
-	public void move(Vector3f delta) {
+	public Light move(Vector3f delta) {
 		setPosition(new Vector3f(position.x + delta.x, position.y + delta.y, position.z + delta.z));
+		return this;
 	}
 }
