@@ -6,3 +6,4 @@ build/
 build.xml
 *.db
 *.log
+engine.cfg
