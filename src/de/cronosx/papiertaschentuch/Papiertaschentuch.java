@@ -3,13 +3,10 @@ package de.cronosx.papiertaschentuch;
 import com.bulletphysics.linearmath.*;
 import de.cronosx.papiertaschentuch.EventEmitter.Listener;
 import static de.cronosx.papiertaschentuch.PhysicalEntity.CollisionType.*;
-import de.cronosx.papiertaschentuch.vecmath.Vector2i;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import de.cronosx.papiertaschentuch.vecmath.*;
+import java.io.*;
 import java.util.concurrent.atomic.*;
-import javax.vecmath.Vector3f;
+import javax.vecmath.*;
 
 public class Papiertaschentuch {
 	public static final int ticksPerSecond = 60;
@@ -24,29 +21,8 @@ public class Papiertaschentuch {
 	private final Player player;
 	private final Entities entities;
 	private boolean exited;
-	private EventEmitter emitter;
-	
-	public static Papiertaschentuch getInstance() {
-		return instance;
-	}
-
-	public Game getGame() {
-		return game;
-	}
-	
-	public Graphics getGraphics() {
-		return graphics;
-	}
-	
-	public static Config getConfig() {
-		return config;
-	}
-	
-	private void checkReady() {
-		if(game.isReady() && graphics.isReady()) {
-			emitter.emit("ready");
-		}
-	}
+	private final EventEmitter emitter;
+	private final Scripts scripts;
 
 	public Papiertaschentuch() {
 		emitter = new EventEmitter();
@@ -62,6 +38,7 @@ public class Papiertaschentuch {
 				shutdown();
 			}
 		});
+		scripts = new Scripts();
 		exited = false;
 		player = new Player();
 		entities = new Entities();
@@ -120,6 +97,32 @@ public class Papiertaschentuch {
 		Log.debug("Papiertaschentuch initialized.");
 	}
 	
+	public static Papiertaschentuch getInstance() {
+		return instance;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+	
+	public Scripts getScripts() {
+		return scripts;
+	}
+	
+	public Graphics getGraphics() {
+		return graphics;
+	}
+	
+	public static Config getConfig() {
+		return config;
+	}
+	
+	private void checkReady() {
+		if(game.isReady() && graphics.isReady()) {
+			emitter.emit("ready");
+		}
+	}
+	
 	public void on(String s, Listener l) {
 		emitter.on(s, l);
 	}
@@ -164,7 +167,12 @@ public class Papiertaschentuch {
 		if(config != null) {
 			instance = new Papiertaschentuch();
 			instance.start();
-			testgame();
+			instance.getScripts()
+				.addBinding("PPTT", new JSBinding())
+				.addBinding("vec2i", Vector2i.class)
+				.finalizeBindings()
+				.loadDirectory(getConfig().getString("Scripts folder", "scripts/"));
+				
 		} 
 		else {
 			Log.fatal("Unable to parse config. Aborting.");
