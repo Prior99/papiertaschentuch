@@ -1,17 +1,27 @@
 package de.cronosx.papiertaschentuch;
 
 import de.cronosx.papiertaschentuch.vecmath.Vector2i;
+import java.io.*;
+import javax.script.*;
 import javax.vecmath.Vector3f;
-import jdk.nashorn.api.scripting.JSObject;
+import jdk.nashorn.api.scripting.*;
 
 public class JSBinding {
-	public final JSObjectInterface createText;
-	public final JSObjectInterface createEntity;
+	public final ScriptObjectMirrorInterface createText;
+	public final ScriptObjectMirrorInterface createEntity;
 	public final StringInterface getModel;
 	public final StringInterface getTexture;
-	public final JSObjectInterface createPhysicalEntity;
+	public final ScriptObjectMirrorInterface createPhysicalEntity;
+	public final CallbackInterface on;
+	public final ScriptObjectMirrorInterface createLight;
+	private final EventEmitter emitter;
+	
 	public JSBinding() {
-		createText = (JSObjectInterface)(obj) -> {
+		emitter = new EventEmitter();
+		Papiertaschentuch.getInstance().getEmitter().addChild(emitter);
+		Papiertaschentuch.getInstance().getGraphics().getEmitter().addChild(emitter);
+		Papiertaschentuch.getInstance().getGame().getEmitter().addChild(emitter);
+		createText = (ScriptObjectMirrorInterface)(obj) -> {
 			if(obj.hasMember("text") && obj.hasMember("position")) {
 				return Text.createText((String)obj.getMember("text"), (Vector2i)obj.getMember("position"));
 			}
@@ -20,12 +30,24 @@ public class JSBinding {
 			}
 		};
 		getModel = (StringInterface)(filename) -> {
-			return Models.getModel(filename);
+			try {
+				return Models.getModel(filename);
+			}
+			catch(IOException e) {
+				Log.error("Script requested modefile \"" + filename + "\", which does not exist.");
+				return null;
+			}
 		};
 		getTexture = (StringInterface)(filename) -> {
-			return Textures.getTexture(filename);
+			try {
+				return Textures.getTexture(filename);
+			}
+			catch(IOException e) {
+				Log.error("Script requested texturefile \"" + filename + "\", which does not exist.");
+				return null;
+			}
 		};
-		createEntity = (JSObjectInterface)(obj) -> {
+		createEntity = (ScriptObjectMirrorInterface)(obj) -> {
 			if(!obj.hasMember("model") && !obj.hasMember("texture")) {
 				return Entities.createEntity();
 			}
@@ -36,7 +58,30 @@ public class JSBinding {
 				throw new IllegalArgumentException("Either both model and texture or neither of them have to be supplied when calling \"createEntity\"");
 			}
 		};
-		createPhysicalEntity = (JSObjectInterface)(obj) -> {
+		createLight = (ScriptObjectMirrorInterface)(obj) -> {
+			Vector3f position, color;
+			if(obj.hasMember("position")) {
+				position = (Vector3f)obj.getMember("position");
+			}
+			else {
+				position = new Vector3f(0, 0, 0);
+			}
+			if(obj.hasMember("color")) {
+				color = (Vector3f)obj.getMember("color");
+			}
+			else {
+				color = new Vector3f(1, 1, 1);
+			}
+			try {
+				return Lights.createLight(position, color);
+			}
+			catch(UnsupportedOperationException e) {
+				Log.error("Script tried to create more than 8 lightsources.");
+				return null;
+			}
+		
+		};
+		createPhysicalEntity = (ScriptObjectMirrorInterface)(obj) -> {
 			if(obj.hasMember("model") && obj.hasMember("texture")) {
 				Model model = (Model)obj.getMember("model");
 				Texture texture = (Texture)obj.getMember("texture");
@@ -49,7 +94,7 @@ public class JSBinding {
 					mass = 0f;
 				}
 				if(obj.hasMember("collisionType")) {
-					collisionType = PhysicalEntity.CollisionType.valueOf(((String)obj.getMember("collisonType")).toUpperCase());
+					collisionType = PhysicalEntity.CollisionType.valueOf(((String)obj.getMember("collisionType")).toUpperCase());
 				}
 				else {
 					collisionType = PhysicalEntity.CollisionType.CONVEX;
@@ -70,6 +115,19 @@ public class JSBinding {
 				throw new IllegalArgumentException("A physical entity needs at least \"model\" and \"texture\".");
 			}
 		};
+		on = (CallbackInterface)(key, obj) -> {
+			emitter.on(key, () -> {
+				try {
+					obj.call(obj);
+				}
+				catch(NashornException e) {
+					Log.fatal("An exception occured when executing callback \"" + key + "\" on scripts. \n" + 
+							  "Linenumber: " + e.getLineNumber() + "\n" + 
+							  "File: " + e.getFileName() + "\n" + 
+							  "Error: " + e.getEcmaError());
+				}
+			});
+		};
 	}
 	
 	@FunctionalInterface
@@ -78,7 +136,12 @@ public class JSBinding {
 	}
 	
 	@FunctionalInterface
-	public static interface JSObjectInterface {
-		public Object apply(JSObject obj);
+	public static interface ScriptObjectMirrorInterface {
+		public Object apply(ScriptObjectMirror obj);
+	}
+	
+	@FunctionalInterface
+	public static interface CallbackInterface {
+		public void apply(String key, ScriptObjectMirror obj);
 	}
 }

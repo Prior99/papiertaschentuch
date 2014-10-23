@@ -23,8 +23,8 @@ public class Game extends Thread {
 		ready = false;
 	}
 	
-	public void on(String string, Listener l) {
-		emitter.on(string, l);
+	public EventEmitter getEmitter() {
+		return emitter;
 	}
 
 	public float retrieveTPSSinceLastCall() {
@@ -43,13 +43,13 @@ public class Game extends Thread {
 	@Override
 	public void run() {
 		ready = true;
-		emitter.emit("ready");
+		emitter.emit("gameready");
 		while (!Input.isClosed() && !exit) {
 			long start = System.currentTimeMillis();
 			Input.tick();
 			ticksSinceLastCall++;
 			try {
-				emitter.emit("tick");
+				emitter.emit("gametick");
 			} 
 			catch (Exception e) {
 				System.out.println("Error in gameloop, shutting down: " + e.getMessage());
@@ -70,7 +70,7 @@ public class Game extends Thread {
 				Log.warn("Could not keep tickrate up. " + (elapsed - waitTime) + "ms (That's more than " + msThreshold + " ms) behind!");
 			}
 		}
-		emitter.emit("shutdown");
+		emitter.emit("gameshutdown");
 	}
 
 	public void shutdown() {

@@ -1,5 +1,6 @@
 package de.cronosx.papiertaschentuch;
 
+import java.io.*;
 import java.nio.FloatBuffer;
 import javax.vecmath.*;
 import org.lwjgl.BufferUtils;
@@ -26,9 +27,14 @@ public class Light {
 	
 	private void setDebugEntity(Entity entity) {
 		this.debugEntity = entity;
-		entity.setModel(Models.getModel("models/lightsource.obj"));
-		entity.setTexture(Textures.getTexture("textures/lightsource.png"));
-		entity.deactivateLighting();
+		try {
+			entity.setModel(Models.getModel("models/lightsource.obj"));
+			entity.setTexture(Textures.getTexture("textures/lightsource.png"));
+			entity.deactivateLighting();
+		}
+		catch(IOException e) {
+			Log.fatal("Model \"models/lightsource.obj\" or texture \"textures/lightsource.png\" not found. unable to debug lightsources.");
+		}
 	}
 	
 	public Vector3f getColor() {

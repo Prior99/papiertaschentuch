@@ -6,11 +6,23 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EventEmitter {
 	private final ReentrantLock mutex;
 	private final Map<String, List<Listener>> map;
+	private final List<EventEmitter> children;
 	
 	
 	public EventEmitter() {
+		children = new ArrayList<>();
 		mutex = new ReentrantLock();
 		map = new HashMap<>();
+	}
+	
+	public void addChild(EventEmitter emitter) {
+		mutex.lock();
+		try {
+			children.add(emitter);
+		}
+		finally {
+			mutex.unlock();
+		}
 	}
 	
 	public void on(String string, Listener l) {
@@ -35,6 +47,9 @@ public class EventEmitter {
 					listener.invoke();
 				});
 			}
+			children.stream().forEach((emitter) -> {
+				emitter.emit(string);
+			});
 		} 
 		finally {
 			mutex.unlock();

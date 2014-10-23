@@ -48,7 +48,7 @@ public class Papiertaschentuch {
 			DebugDrawer dDraw = new DebugDrawer();
 			physics.setDebugDrawer(dDraw);
 			dDraw.setDebugMode(DebugDrawModes.MAX_DEBUG_DRAW_MODE | DebugDrawModes.DRAW_AABB);
-			graphics.on("tick", () -> {
+			graphics.getEmitter().on("graphicstick", () -> {
 				dDraw.begin();
 				physics.debugDraw();
 				dDraw.end();
@@ -58,7 +58,7 @@ public class Papiertaschentuch {
 		if(getConfig().getBool("Log FPS", false)) {
 			AtomicInteger i = new AtomicInteger(0);
 			final int tickAmount = getConfig().getInt("FPS Tick Amount", 600);
-			game.on("tick", () -> {
+			game.getEmitter().on("gametick", () -> {
 				if(i.getAndIncrement() > tickAmount) {
 					Log.info("FPS in last " + tickAmount + " ticks: " + graphics.retrieveFPSSinceLastCall());
 					i.set(0);
@@ -68,29 +68,29 @@ public class Papiertaschentuch {
 		if(getConfig().getBool("Log TPS", false)) {
 			AtomicInteger i = new AtomicInteger(0);
 			final int tickAmount = getConfig().getInt("TPS Tick Amount", 600);
-			game.on("tick", () -> {
+			game.getEmitter().on("gametick", () -> {
 				if(i.getAndIncrement() > tickAmount) {
 					Log.info("TPS in last " + tickAmount + " ticks: " + game.retrieveTPSSinceLastCall());
 					i.set(0);
 				}
 			});
 		}
-		graphics.on("ready", () -> {
+		graphics.getEmitter().on("graphicsready", () -> {
 			checkReady();
 		});
-		game.on("ready", () -> {
+		game.getEmitter().on("gameready", () -> {
 			checkReady();
 		});
-		game.on("tick", () -> {
+		game.getEmitter().on("gametick", () -> {
 			physics.tick();
 		});
-		game.on("shutdown", () -> {
+		game.getEmitter().on("gameshutdown", () -> {
 			shutdown();
 		});
-		graphics.on("shutdown", () -> {
+		graphics.getEmitter().on("graphicsshutdown", () -> {
 			shutdown();
 		});
-		this.on("ready", () -> {
+		this.emitter.on("ready", () -> {
 			Input.start();
 		});
 		activatePlayer(player);
@@ -123,8 +123,8 @@ public class Papiertaschentuch {
 		}
 	}
 	
-	public void on(String s, Listener l) {
-		emitter.on(s, l);
+	public EventEmitter getEmitter() {
+		return emitter;
 	}
 
 	private void shutdown() {
@@ -177,17 +177,5 @@ public class Papiertaschentuch {
 		else {
 			Log.fatal("Unable to parse config. Aborting.");
 		}
-	}
-	
-	public static void testgame() {
-		Entities.createPhysicalEntity(Models.getModel("models/cube_world.obj"), Textures.getTexture("textures/groundrocks.png"), 0, CONCAVE);
-		Lights.createLight(new Vector3f(5, -5, 0), new Vector3f(1.f, .9f, .8f));
-		Text.createText("Hello, World!", new Vector2i(10, 10));
-		final AtomicInteger i = new AtomicInteger(0);
-		getInstance().getGame().on("tick", () -> {
-			if(i.incrementAndGet() < 100) {
-				Entities.createPhysicalEntity(Models.getModel("models/crate.obj"), Textures.getTexture("textures/crate.png"), 50000f, BOX, new Vector3f(.5f, .5f, .5f));
-			}
-		});
 	}
 }

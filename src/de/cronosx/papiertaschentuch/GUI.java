@@ -85,7 +85,12 @@ public class GUI {
 	
 	private void checkInit() {
 		if(defaultFont == null) {
-			defaultFont = Textures.getTexture("fonts/default.png");
+			try {
+				defaultFont = Textures.getTexture("fonts/default.png");
+			}
+			catch(IOException e) {
+				Log.fatal("Texture for font \"fonts/default.png\" not found or could not be opened.");
+			}
 		}
 		if(letterShader == null) {
 			letterShader = Shaders.getShader("shader/letter");

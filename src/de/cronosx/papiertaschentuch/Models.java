@@ -1,6 +1,6 @@
 package de.cronosx.papiertaschentuch;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 public class Models {
@@ -11,14 +11,20 @@ public class Models {
 
 	}
 
-	public static Model getModel(String fileName) {
+	public static Model getModel(String fileName) throws FileNotFoundException {
 		if (models.containsKey(fileName)) {
 			return models.get(fileName);
 		} else {
-			Model model = new ModelOBJ(new File(fileName));
-			model.init();
-			models.put(fileName, model);
-			return model;
+			File file = new File(fileName);
+			if(file.exists()) {
+				Model model = new ModelOBJ(file);
+				model.init();
+				models.put(fileName, model);
+				return model;
+			}
+			else {
+				throw new FileNotFoundException("Modelfile \"" + file.getName() + "\" not found!");
+			}
 		}
 	}
 }

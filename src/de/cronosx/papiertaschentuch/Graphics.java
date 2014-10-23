@@ -127,7 +127,7 @@ public class Graphics extends Thread {
 		Lights.forEach((l) -> {
 			l.bind();
 		});
-		emitter.emit("tick");
+		emitter.emit("graphicstick");
 		drawEntities();
 		framesSinceLastCall++;
 		gui.draw();
@@ -190,7 +190,7 @@ public class Graphics extends Thread {
 	public void run() {
 		setup();
 		ready = true;
-		emitter.emit("ready");
+		emitter.emit("graphicsready");
 		while (!Input.isClosed() && !exit) {
 			try {
 				render();
@@ -202,15 +202,15 @@ public class Graphics extends Thread {
 			}
 		}
 		Display.destroy();
-		emitter.emit("shutdown");
+		emitter.emit("graphicsshutdown");
 	}
 
 	public void shutdown() {
 		exit = true;
 	}
 	
-	public void on(String s, Listener l) {
-		emitter.on(s, l);
+	public EventEmitter getEmitter() {
+		return emitter;
 	}
 
 	public static float degreeToRadiant(float degree) {
