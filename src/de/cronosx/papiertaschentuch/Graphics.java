@@ -160,9 +160,9 @@ public class Graphics extends Thread {
 			modelMatrix.setIdentity();
 			push();
 			modelMatrix.translate(position);
-			/*modelMatrix.rotate(rotation.x, new Vector3f(1.f, 0.f, 0.f));
+			modelMatrix.rotate(rotation.x, new Vector3f(1.f, 0.f, 0.f));
 			modelMatrix.rotate(rotation.y, new Vector3f(0.f, 1.f, 0.f));
-			modelMatrix.rotate(rotation.z, new Vector3f(0.f, 0.f, 1.f));*/
+			modelMatrix.rotate(rotation.z, new Vector3f(0.f, 0.f, 1.f));
 			Matrix4f normalMatrix = new Matrix4f();
 			normalMatrix.load(modelMatrix);
 			normalMatrix.invert();

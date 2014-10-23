@@ -4,27 +4,25 @@ var text;
 PPTT.on("ready", function() {
 	print("Script started up!");
 	PPTT.createPhysicalEntity({
-		model : PPTT.getModel("models/cube_world.obj"), 
-		texture : PPTT.getTexture("textures/hull.png"),
-		collisionType : "concave"
-	});
-	crate = PPTT.createPhysicalEntity({
-		model : PPTT.getModel("models/crate.obj"),
-		texture : PPTT.getTexture("textures/crate.png"),
-		mass : 1000
-	});
+		model : PPTT.getModel("models/cube.obj"),
+		texture : PPTT.getTexture("textures/grass_ground.png")
+	})
+	.setPosition(new Vec3f(0, -10, 0));
 	text = PPTT.createText({
 		text : "Hello, World!",
 		position : new Vec2i(0, 0)
 	});
 	PPTT.createLight({
-		position: new Vec3f(0, -6, 0), 
+		position: new Vec3f(-6, -6, -6), 
 		color: new Vec3f(.8, .9, 1.)
 	});
-});
-
-PPTT.on("gametick", function() {
-	if(text !== undefined) {
-		text.move(new Vec2i(1, 0));
+	for(var x = -6; x < 6; x+= 1) {
+		for(var z = -6; z < 6; z+= 1) {
+			PPTT.createEntity({
+				model : PPTT.getModel("models/grass.obj"),
+				texture : PPTT.getTexture("textures/grass.png")
+			})
+			.setPosition(new Vec3f(x, -.6, z));
+		}
 	}
 });

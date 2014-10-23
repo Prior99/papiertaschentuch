@@ -6,8 +6,6 @@ import com.bulletphysics.dynamics.*;
 import com.bulletphysics.dynamics.character.*;
 import com.bulletphysics.linearmath.*;
 import javax.vecmath.*;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class Player {
 
