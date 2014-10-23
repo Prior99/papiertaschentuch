@@ -89,9 +89,12 @@ public class PhysicalEntity extends Entity {
 	public PhysicalEntity setPosition(Vector3f position) {
 		super.setPosition(position);
 		Transform tmp = new Transform();
-		rigidBody.getCenterOfMassTransform(tmp);
+		rigidBody.getWorldTransform(tmp);
 		tmp.origin.set(position);
-		rigidBody.setCenterOfMassTransform(tmp);
+		rigidBody.setWorldTransform(tmp);
+		rigidBody.getMotionState().getWorldTransform(tmp);
+		tmp.origin.set(position);
+		rigidBody.getMotionState().setWorldTransform(tmp);
 		return this;
 	}
 
@@ -99,11 +102,14 @@ public class PhysicalEntity extends Entity {
 	public PhysicalEntity setRotation(Vector3f rotation) {
 		super.setRotation(rotation);
 		Transform tmp = new Transform();
-		rigidBody.getCenterOfMassTransform(tmp);
 		Quat4f quat = new Quat4f();
 		QuaternionUtil.setEuler(quat, rotation.x, rotation.y, rotation.z);
+		rigidBody.getWorldTransform(tmp);
 		tmp.setRotation(quat);
-		rigidBody.setCenterOfMassTransform(tmp);
+		rigidBody.setWorldTransform(tmp);
+		rigidBody.getMotionState().getWorldTransform(tmp);
+		tmp.setRotation(quat);
+		rigidBody.getMotionState().setWorldTransform(tmp);
 		return this;
 	}
 }
