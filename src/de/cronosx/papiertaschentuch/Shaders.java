@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.vecmath.*;
 import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
+import java.nio.*;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;

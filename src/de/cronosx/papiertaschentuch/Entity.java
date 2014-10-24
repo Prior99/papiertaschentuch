@@ -8,11 +8,27 @@ public class Entity {
 	private Model model;
 	private Texture texture;
 	private boolean lightingDeactivated;
+	private boolean deactivatedDepthBuffer;
 
 	public Entity() {
 		position = new Vector3f();
 		rotation = new Vector3f();
+		deactivatedDepthBuffer = false;
 		lightingDeactivated = false;
+	}
+	
+	public Entity activateDepthBuffer() {
+		deactivatedDepthBuffer = false;
+		return this;
+	}
+	
+	public Entity deactivateDepthBuffer() {
+		deactivatedDepthBuffer = true;
+		return this;
+	}
+	
+	public boolean istDepthBufferDeactivated() {
+		return deactivatedDepthBuffer;
 	}
 	
 	public boolean isLightingDeactivated() {

@@ -1,28 +1,43 @@
 package de.cronosx.papiertaschentuch;
 
 import java.io.*;
-import java.nio.FloatBuffer;
 import javax.vecmath.*;
-import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Light {
 
 	private Vector3f position;
 	private Vector3f color;
-	private final int id;
 	private boolean changed;
+	private boolean enabled;
+	private float strength;
 	private Entity debugEntity;
-
+	private final int id;
+	
 	public Light(int id) {
 		this.id = id;
 		this.color = new Vector3f(1.f, 1.f, 1.f);
 		this.position = new Vector3f(0, 0, 0);
+		this.strength = 1.f;
+		this.enabled = true;
 		changed = true;
 		if(Papiertaschentuch.getConfig().getBool("Debug Lights", false)) {
 			Entity e = Entities.createEntity();
 			setDebugEntity(e);
 		}
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public boolean checkChanged() {
+		boolean ch = changed;
+		changed = false;
+		return ch;
 	}
 	
 	private void setDebugEntity(Entity entity) {
@@ -31,10 +46,33 @@ public class Light {
 			entity.setModel(Models.getModel("models/lightsource.obj"));
 			entity.setTexture(Textures.getTexture("textures/lightsource.png"));
 			entity.deactivateLighting();
+			entity.deactivateDepthBuffer();
 		}
 		catch(IOException e) {
 			Log.fatal("Model \"models/lightsource.obj\" or texture \"textures/lightsource.png\" not found. unable to debug lightsources.");
 		}
+	}
+	
+	public Light enable() {
+		enabled = true;
+		changed = true;
+		return this;
+	}
+	
+	public Light disable() {
+		enabled = false;
+		changed = true;
+		return this;
+	}
+	
+	public float getStrength() {
+		return strength;
+	}
+	
+	public Light setStrength(float f) {
+		this.strength = f;
+		changed = true;
+		return this;
 	}
 	
 	public Vector3f getColor() {
@@ -54,27 +92,6 @@ public class Light {
 			debugEntity.setPosition(position);
 		}
 		return this;
-	}
-	
-	public void bind() {
-		if(changed) {
-			changed = false;
-			FloatBuffer positionBuffer = BufferUtils.createFloatBuffer(4);
-			positionBuffer.put(position.x);
-			positionBuffer.put(position.y);
-			positionBuffer.put(position.z);
-			positionBuffer.put(1.0f);
-			positionBuffer.rewind();
-			glLight(id, GL_POSITION, positionBuffer);
-			FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(4);
-			colorBuffer.put(color.x);
-			colorBuffer.put(color.y);
-			colorBuffer.put(color.z);
-			colorBuffer.put(1.0f);
-			colorBuffer.rewind();
-			glLight(id, GL_DIFFUSE, colorBuffer);
-			glLight(id, GL_SPECULAR, colorBuffer);
-		}
 	}
 	
 	public Vector3f getPosition() {

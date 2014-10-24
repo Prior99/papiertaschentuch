@@ -2,7 +2,6 @@ package de.cronosx.papiertaschentuch;
 
 import de.cronosx.papiertaschentuch.vecmath.Vector2i;
 import java.io.*;
-import javax.script.*;
 import javax.vecmath.Vector3f;
 import jdk.nashorn.api.scripting.*;
 
@@ -14,13 +13,17 @@ public class JSBinding {
 	public final ScriptObjectMirrorInterface createPhysicalEntity;
 	public final CallbackInterface on;
 	public final ScriptObjectMirrorInterface createLight;
+	public final ObjectGetterInterface getSun;
 	private final EventEmitter emitter;
 	
 	public JSBinding() {
 		emitter = new EventEmitter();
-		Papiertaschentuch.getInstance().getEmitter().addChild(emitter);
-		Papiertaschentuch.getInstance().getGraphics().getEmitter().addChild(emitter);
-		Papiertaschentuch.getInstance().getGame().getEmitter().addChild(emitter);
+		Papiertaschentuch.getInstance().getEmitter().on("ready", () -> {
+			Papiertaschentuch.getInstance().getEmitter().addChild(emitter);
+			Papiertaschentuch.getInstance().getGraphics().getEmitter().addChild(emitter);
+			Papiertaschentuch.getInstance().getGame().getEmitter().addChild(emitter);
+			emitter.emit("ready");
+		});
 		createText = (ScriptObjectMirrorInterface)(obj) -> {
 			if(obj.hasMember("text") && obj.hasMember("position")) {
 				return Text.createText((String)obj.getMember("text"), (Vector2i)obj.getMember("position"));
@@ -47,6 +50,9 @@ public class JSBinding {
 				return null;
 			}
 		};
+		getSun = (ObjectGetterInterface)() -> {
+			return Lights.getSun();
+		};
 		createEntity = (ScriptObjectMirrorInterface)(obj) -> {
 			if(!obj.hasMember("model") && !obj.hasMember("texture")) {
 				return Entities.createEntity();
@@ -60,6 +66,7 @@ public class JSBinding {
 		};
 		createLight = (ScriptObjectMirrorInterface)(obj) -> {
 			Vector3f position, color;
+			float strength;
 			if(obj.hasMember("position")) {
 				position = (Vector3f)obj.getMember("position");
 			}
@@ -72,11 +79,17 @@ public class JSBinding {
 			else {
 				color = new Vector3f(1, 1, 1);
 			}
+			if(obj.hasMember("strength")) {
+				strength = ((Number)obj.getMember("strength")).floatValue();
+			}
+			else {
+				strength = 10f;
+			}
 			try {
-				return Lights.createLight(position, color);
+				return Lights.createLight(position, color, strength);
 			}
 			catch(UnsupportedOperationException e) {
-				Log.error("Script tried to create more than 8 lightsources.");
+				Log.error("Script tried to create more than 64 lightsources.");
 				return null;
 			}
 		
@@ -88,7 +101,7 @@ public class JSBinding {
 				float mass;
 				PhysicalEntity.CollisionType collisionType;
 				if(obj.hasMember("mass")) {
-					mass = (int)obj.getMember("mass");
+					mass = ((Number)obj.getMember("mass")).floatValue();
 				}
 				else {
 					mass = 0f;
@@ -143,5 +156,10 @@ public class JSBinding {
 	@FunctionalInterface
 	public static interface CallbackInterface {
 		public void apply(String key, ScriptObjectMirror obj);
+	}
+	
+	@FunctionalInterface
+	public static interface ObjectGetterInterface {
+		public Object apply();
 	}
 }

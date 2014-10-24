@@ -1,13 +1,12 @@
 package de.cronosx.papiertaschentuch;
 
-import de.cronosx.papiertaschentuch.EventEmitter.Listener;
 import de.cronosx.papiertaschentuch.Shaders.Shader;
 import de.cronosx.papiertaschentuch.vecmath.Matrix4f;
+import java.nio.*;
 import java.util.*;
 import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
+import org.lwjgl.*;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
@@ -19,15 +18,15 @@ public class Graphics extends Thread {
 
 	private final int screenWidth, screenHeight;
 	private final Entities entities;
-	private EventEmitter emitter;
+	private final EventEmitter emitter;
 	private boolean exit;
 	private Player player;
 	private Shader defaultShader;
 	private int framesSinceLastCall;
 	private long lastCall;
 	private Matrix4f modelMatrix, viewMatrix, projectionMatrix;
-	private Stack<Matrix4f> modelMatrixStack;
-	private GUI gui;
+	private final Stack<Matrix4f> modelMatrixStack;
+	private final GUI gui;
 	private boolean ready;
 	
 	public Graphics(int width, int height, Entities entities, Player player) {
@@ -124,14 +123,31 @@ public class Graphics extends Thread {
 
 	private void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		Lights.forEach((l) -> {
-			l.bind();
-		});
+		updateLights();
 		emitter.emit("graphicstick");
 		drawEntities();
 		framesSinceLastCall++;
 		gui.draw();
 		Display.update();
+	}
+	
+	private void updateLights() {
+		glUseProgram(defaultShader.getID());
+		Lights.stream().filter(p -> p.checkChanged()).forEach((Light l) -> {
+			defaultShader.setUniform("uLightAmount", Lights.getAmount());
+			Log.info("We have " + Lights.getAmount() + " lights");
+			String lightName = "uLights[" + l.getID() + "]";
+			defaultShader.setUniform(lightName + ".position", l.getPosition());
+			defaultShader.setUniform(lightName + ".color", l.getColor());
+			defaultShader.setUniform(lightName + ".enabled", l.isEnabled());
+			defaultShader.setUniform(lightName + ".strength", l.getStrength());
+			Log.info("Updating light " + lightName + " To: " + l.getPosition() + " " + l.getColor() + " " + l.isEnabled() + " " + l.getStrength());
+		});
+		if(Lights.getSun().checkChanged()) {
+			defaultShader.setUniform("uSun.position", Lights.getSun().getPosition());
+			defaultShader.setUniform("uSun.color", Lights.getSun().getColor());
+			defaultShader.setUniform("uSun.ambientColor", Lights.getSun().getAmbientColor());
+		}
 	}
 	
 	private void drawEntities() {
@@ -143,7 +159,13 @@ public class Graphics extends Thread {
 		glUseProgram(defaultShader.getID());
 		defaultShader.setUniform("uViewMatrix", viewMatrix);
 		entities.forEach((e) -> {
+			if(e.istDepthBufferDeactivated()) {
+				glDisable(GL_DEPTH_TEST);
+			}
 			drawEntity(e);
+			if(e.istDepthBufferDeactivated()) {
+				glEnable(GL_DEPTH_TEST);
+			}
 		});
 	}
 	

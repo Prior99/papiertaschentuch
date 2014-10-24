@@ -1,15 +1,3 @@
-struct Light {
-	vec3 position;
-	vec3 color;
-	bool enabled;
-	float strength;
-};
-
-struct Sun {
-	vec3 position;
-	vec3 color;
-};
-
 attribute vec3 aVertexPosition;
 attribute vec2 aTextureCoord;
 attribute vec3 aNormals;
@@ -29,7 +17,4 @@ void main() {
     vTextureCoord = aTextureCoord;
 	vNormal = normalize(vec3(uNormalMatrix * vec4(aNormals, 1.)));
 	vVertex = vec3(uModelMatrix * vec4(aVertexPosition, 1.));
-	/*for(int i = 0; i < LIGHT_AMOUNT; i++) {
-		vLightPositions[i] = vec3(gl_LightSource[i].position);
-	}*/
 }

@@ -1,28 +1,51 @@
-var crate;
 var text;
-
-PPTT.on("ready", function() {
+var sun;
+var i = 0;
+PT.on("ready", function() {
 	print("Script started up!");
-	PPTT.createPhysicalEntity({
-		model : PPTT.getModel("models/cube.obj"),
-		texture : PPTT.getTexture("textures/grass_ground.png")
+	PT.createPhysicalEntity({
+		model : PT.getModel("models/cube_world.obj"),
+		texture : PT.getTexture("textures/hull.png"),
+		collisionType : "concave"
 	})
-	.setPosition(new Vec3f(0, -10, 0));
-	text = PPTT.createText({
+	.setPosition(new Vec3f(0, -14, 0));
+	text = PT.createText({
 		text : "Hello, World!",
 		position : new Vec2i(0, 0)
 	});
-	PPTT.createLight({
-		position: new Vec3f(-6, -6, -6), 
-		color: new Vec3f(.8, .9, 1.)
+	PT.createLight({
+		position: new Vec3f(6, -22, -6), 
+		color: new Vec3f(0.7, 0.7, 1),
+		strength : 10
 	});
-	for(var x = -6; x < 6; x+= 1) {
-		for(var z = -6; z < 6; z+= 1) {
-			PPTT.createEntity({
-				model : PPTT.getModel("models/grass.obj"),
-				texture : PPTT.getTexture("textures/grass.png")
-			})
-			.setPosition(new Vec3f(x, -.6, z));
-		}
+	PT.createLight({
+		position: new Vec3f(-6, -22, -6), 
+		color: new Vec3f(1, 0.7, 0.7),
+		strength : 10
+	});
+	PT.createLight({
+		position: new Vec3f(6, -22, 6), 
+		color: new Vec3f(0.7, 1, 0.7),
+		strength : 10
+	});
+	PT.createLight({
+		position: new Vec3f(-6, -22, 6), 
+		color: new Vec3f(0.9, 0.9, 0.7),
+		strength : 10
+	});
+	sun = PT.getSun();
+	sun.setColor(new Vec3f(.3, .3, .3));
+	i = 0;
+});
+
+PT.on("gametick", function() {
+	if(i++ > 120) {
+		i = 0;
+		PT.createPhysicalEntity({
+			model : PT.getModel("models/crate.obj"),
+			texture : PT.getTexture("textures/crate.png"),
+			mass : 2000
+		})
+		.setPosition(new Vec3f(0, -3, 0));
 	}
 });

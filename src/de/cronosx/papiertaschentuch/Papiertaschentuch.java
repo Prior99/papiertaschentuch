@@ -168,8 +168,7 @@ public class Papiertaschentuch {
 			instance = new Papiertaschentuch();
 			instance.start();
 			instance.getScripts()
-				.addBinding("PPTT", new JSBinding())
-				.addBinding("vec2i", Vector2i.class)
+				.addBinding("PT", new JSBinding())
 				.finalizeBindings()
 				.loadDirectory(getConfig().getString("Scripts folder", "scripts/"));
 				
