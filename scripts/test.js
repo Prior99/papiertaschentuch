@@ -13,22 +13,22 @@ PT.on("ready", function() {
 		text : "Hello, World!",
 		position : new Vec2i(0, 0)
 	});
-	PT.createLight({
+	PT.createPointLight({
 		position: new Vec3f(6, -22, -6), 
 		color: new Vec3f(0.7, 0.7, 1),
 		strength : 10
 	});
-	PT.createLight({
+	PT.createPointLight({
 		position: new Vec3f(-6, -22, -6), 
 		color: new Vec3f(1, 0.7, 0.7),
 		strength : 10
 	});
-	PT.createLight({
+	PT.createPointLight({
 		position: new Vec3f(6, -22, 6), 
 		color: new Vec3f(0.7, 1, 0.7),
 		strength : 10
 	});
-	PT.createLight({
+	PT.createPointLight({
 		position: new Vec3f(-6, -22, 6), 
 		color: new Vec3f(0.9, 0.9, 0.7),
 		strength : 10

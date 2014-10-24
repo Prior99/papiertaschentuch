@@ -7,30 +7,30 @@ import javax.vecmath.Vector3f;
 
 public class Lights {
 
-	private static final List<Light> lights = new ArrayList<>();
+	private static final List<PointLight> lights = new ArrayList<>();
 	private static final Sun sun = new Sun();
 
-	public static Light createLight(Vector3f position) {
-		return createLight()
+	public static PointLight createPointLight(Vector3f position) {
+		return createPointLight()
 			.setPosition(position);
 	}
 	
-	public static Light createLight(Vector3f position, Vector3f color) {
-		return createLight()
+	public static PointLight createPointLight(Vector3f position, Vector3f color) {
+		return createPointLight()
 			.setPosition(position)
 			.setColor(color);
 	}
 	
-	public static Light createLight(Vector3f position, Vector3f color, float strength) {
-		return createLight()
+	public static PointLight createPointLight(Vector3f position, Vector3f color, float strength) {
+		return createPointLight()
 			.setPosition(position)
 			.setColor(color)
 			.setStrength(strength);
 	}
 	
-	public static Light createLight() {
+	public static PointLight createPointLight() {
 		if(lights.size() < 64) {
-			Light light = new Light(lights.size());
+			PointLight light = new PointLight(lights.size());
 			lights.add(light);
 			return light;
 		}
@@ -47,11 +47,11 @@ public class Lights {
 		return sun;
 	}
 
-	public static Stream<Light> stream() {
+	public static Stream<PointLight> stream() {
 		return lights.stream();
 	}
 	
-	public static class Sun {
+	public static class Sun implements SceneObject, Lightsource {
 		private Vector3f position;
 		private Vector3f color;
 		private Vector3f ambientColor;
@@ -82,6 +82,7 @@ public class Lights {
 			}
 		}
 		
+		@Override
 		public Sun setColor(Vector3f v) {
 			this.color = v;
 			changed = true;
@@ -94,6 +95,7 @@ public class Lights {
 			return this;
 		}
 		
+		@Override
 		public Sun setPosition(Vector3f v) {
 			this.position = v;
 			changed = true;
@@ -103,10 +105,12 @@ public class Lights {
 			return this;
 		}
 		
+		@Override
 		public Vector3f getPosition() {
 			return position;
 		}
 		
+		@Override
 		public Vector3f getColor() {
 			return color;
 		}
@@ -121,9 +125,16 @@ public class Lights {
 			return ch;
 		}
 		
+		@Override
 		public Sun move(Vector3f delta) {
 			setPosition(new Vector3f(position.x + delta.x, position.y + delta.y, position.z + delta.z));
 			return this;
 		}
+
+		@Override
+		public SceneObject setRotation(Vector3f rotation) { return this; }
+
+		@Override
+		public Vector3f getRotation() { return new Vector3f(0.f, 0.f, 0.f); }
 	}
 }

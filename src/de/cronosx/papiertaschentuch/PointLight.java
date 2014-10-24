@@ -3,7 +3,7 @@ package de.cronosx.papiertaschentuch;
 import java.io.*;
 import javax.vecmath.*;
 
-public class Light {
+public class PointLight implements SceneObject, Lightsource {
 
 	private Vector3f position;
 	private Vector3f color;
@@ -13,7 +13,7 @@ public class Light {
 	private Entity debugEntity;
 	private final int id;
 	
-	public Light(int id) {
+	public PointLight(int id) {
 		this.id = id;
 		this.color = new Vector3f(1.f, 1.f, 1.f);
 		this.position = new Vector3f(0, 0, 0);
@@ -53,13 +53,13 @@ public class Light {
 		}
 	}
 	
-	public Light enable() {
+	public PointLight enable() {
 		enabled = true;
 		changed = true;
 		return this;
 	}
 	
-	public Light disable() {
+	public PointLight disable() {
 		enabled = false;
 		changed = true;
 		return this;
@@ -69,23 +69,26 @@ public class Light {
 		return strength;
 	}
 	
-	public Light setStrength(float f) {
+	public PointLight setStrength(float f) {
 		this.strength = f;
 		changed = true;
 		return this;
 	}
 	
+	@Override
 	public Vector3f getColor() {
 		return color;
 	}
 	
-	public Light setColor(Vector3f v) {
+	@Override
+	public PointLight setColor(Vector3f v) {
 		this.color = v;
 		changed = true;
 		return this;
 	}
 
-	public Light setPosition(Vector3f position) {
+	@Override
+	public PointLight setPosition(Vector3f position) {
 		this.position = position;
 		changed = true;
 		if(debugEntity != null) {
@@ -94,12 +97,20 @@ public class Light {
 		return this;
 	}
 	
+	@Override
 	public Vector3f getPosition() {
 		return position;
 	}
 
-	public Light move(Vector3f delta) {
+	@Override
+	public PointLight move(Vector3f delta) {
 		setPosition(new Vector3f(position.x + delta.x, position.y + delta.y, position.z + delta.z));
 		return this;
 	}
+
+	@Override
+	public SceneObject setRotation(Vector3f rotation) { return this; }
+
+	@Override
+	public Vector3f getRotation() { return new Vector3f(0.f, 0.f, 0.f); }
 }

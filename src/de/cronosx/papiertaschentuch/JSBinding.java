@@ -12,7 +12,7 @@ public class JSBinding {
 	public final StringInterface getTexture;
 	public final ScriptObjectMirrorInterface createPhysicalEntity;
 	public final CallbackInterface on;
-	public final ScriptObjectMirrorInterface createLight;
+	public final ScriptObjectMirrorInterface createPointLight;
 	public final ObjectGetterInterface getSun;
 	private final EventEmitter emitter;
 	
@@ -64,7 +64,7 @@ public class JSBinding {
 				throw new IllegalArgumentException("Either both model and texture or neither of them have to be supplied when calling \"createEntity\"");
 			}
 		};
-		createLight = (ScriptObjectMirrorInterface)(obj) -> {
+		createPointLight = (ScriptObjectMirrorInterface)(obj) -> {
 			Vector3f position, color;
 			float strength;
 			if(obj.hasMember("position")) {
@@ -86,7 +86,7 @@ public class JSBinding {
 				strength = 10f;
 			}
 			try {
-				return Lights.createLight(position, color, strength);
+				return Lights.createPointLight(position, color, strength);
 			}
 			catch(UnsupportedOperationException e) {
 				Log.error("Script tried to create more than 64 lightsources.");

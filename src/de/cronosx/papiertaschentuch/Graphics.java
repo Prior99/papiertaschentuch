@@ -133,7 +133,7 @@ public class Graphics extends Thread {
 	
 	private void updateLights() {
 		glUseProgram(defaultShader.getID());
-		Lights.stream().filter(p -> p.checkChanged()).forEach((Light l) -> {
+		Lights.stream().filter(p -> p.checkChanged()).forEach((PointLight l) -> {
 			defaultShader.setUniform("uLightAmount", Lights.getAmount());
 			Log.info("We have " + Lights.getAmount() + " lights");
 			String lightName = "uLights[" + l.getID() + "]";

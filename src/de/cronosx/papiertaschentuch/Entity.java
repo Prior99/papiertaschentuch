@@ -2,7 +2,7 @@ package de.cronosx.papiertaschentuch;
 
 import javax.vecmath.*;
 
-public class Entity {
+public class Entity implements SceneObject{
 
 	private Vector3f position, rotation;
 	private Model model;
@@ -51,10 +51,12 @@ public class Entity {
 		this.texture = texture;
 	}
 
+	@Override
 	public Vector3f getRotation() {
 		return rotation;
 	}
 
+	@Override
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -69,16 +71,19 @@ public class Entity {
 		return this;
 	}
 
+	@Override
 	public Entity setPosition(Vector3f position) {
 		this.position = position;
 		return this;
 	}
 
+	@Override
 	public Entity move(Vector3f delta) {
 		setPosition(new Vector3f(position.x + delta.x, position.y + delta.y, position.z + delta.z));
 		return this;
 	}
 
+	@Override
 	public Entity setRotation(Vector3f rotation) {
 		this.rotation = rotation;
 		return this;
