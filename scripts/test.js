@@ -15,24 +15,14 @@ PT.on("ready", function() {
 	});
 	PT.createPointLight({
 		position: new Vec3f(6, -22, -6), 
-		color: new Vec3f(0.7, 0.7, 1),
+		color: new Vec3f(1, 1, 1),
 		strength : 10
 	});
-	PT.createPointLight({
-		position: new Vec3f(-6, -22, -6), 
-		color: new Vec3f(1, 0.7, 0.7),
-		strength : 10
-	});
-	PT.createPointLight({
-		position: new Vec3f(6, -22, 6), 
-		color: new Vec3f(0.7, 1, 0.7),
-		strength : 10
-	});
-	PT.createPointLight({
-		position: new Vec3f(-6, -22, 6), 
-		color: new Vec3f(0.9, 0.9, 0.7),
-		strength : 10
-	});
+	PT.createPhysicalEntity({
+		model : PT.getModel("models/shelf.obj"),
+		texture : PT.getTexture("textures/shelf.png"),
+		mass: 10000
+	}).setPosition(new Vec3f(0, -10, 0));
 	sun = PT.getSun();
 	sun.setColor(new Vec3f(.3, .3, .3));
 	i = 0;
